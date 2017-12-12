@@ -77,6 +77,7 @@ class SDL2Conan(ConanFile):
 
     def build(self):
         cmake = CMake(self, generator='Ninja')
+        cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
         cmake.definitions['SDL_STATIC'] = not self.options.shared
         if self.settings.os == "Linux":
