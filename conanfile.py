@@ -86,7 +86,7 @@ class SDL2Conan(ConanFile):
             cmake.definitions['NAS'] = self.options.nas
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
-        cmake.configure(source_dir="sources")
+        cmake.configure()
         cmake.build()
         cmake.install()
 
