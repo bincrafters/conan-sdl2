@@ -1,8 +1,9 @@
+#include <SDL.h>
 #include <cstdlib>
 #include <iostream>
 
-int main()
+int main(int argc, char *argv[])
 {
-    std::cout << "Bincrafters\n";
+    SDL_Init(SDL_INIT_VIDEO);
     return EXIT_SUCCESS;
 }
