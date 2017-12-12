@@ -28,6 +28,7 @@ class SDL2Conan(ConanFile):
                        "pulse=True",
                        "nas=True",
                        "esd=True")
+    generators = ['cmake']
 
     def build_requirements(self):
         self.build_requires("ninja_installer/[>=1.8.2]@bincrafters/stable")
