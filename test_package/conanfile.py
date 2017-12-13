@@ -11,6 +11,11 @@ class TestPackageConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        if self.settings.os == "Linux":
+            cmake.definitions['WITH_X11'] = self.options['sdl2'].x11
+            cmake.definitions['WITH_ALSA'] = self.options['sdl2'].alsa
+            cmake.definitions['WITH_PULSE'] = self.options['sdl2'].pulse
+            cmake.definitions['WITH_ESD'] = self.options['sdl2'].esd
         cmake.configure()
         cmake.build()
 
