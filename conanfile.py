@@ -29,7 +29,9 @@ class SDL2Conan(ConanFile):
                "xrandr": [True, False],
                "xscrnsaver": [True, False],
                "xshape": [True, False],
-               "xvm": [True, False]}
+               "xvm": [True, False],
+               "wayland": [True, False],
+               "mir": [True, False]}
     default_options = ("shared=False",
                        "directx=True",
                        "alsa=True",
@@ -45,7 +47,9 @@ class SDL2Conan(ConanFile):
                        "xrandr=True",
                        "xscrnsaver=True",
                        "xshape=True",
-                       "xvm=True")
+                       "xvm=True",
+                       "wayland=False",
+                       "mir=False")
     generators = ['cmake']
 
     def build_requirements(self):
@@ -76,7 +80,7 @@ class SDL2Conan(ConanFile):
                     packages.append('artsc0-dev%s' % arch_suffix)
                 if self.options.x11:
                     packages.extend(['libx11-dev%s' % arch_suffix,
-                                    'libxext-dev%s' % arch_suffix])
+                                     'libxext-dev%s' % arch_suffix])
                 if self.options.xcursor:
                     packages.append('libxcursor-dev%s' % arch_suffix)
                 if self.options.xinerama:
@@ -89,6 +93,13 @@ class SDL2Conan(ConanFile):
                     packages.append('libxss-dev%s' % arch_suffix)
                 if self.options.xvm:
                     packages.append('libxxf86vm-dev%s' % arch_suffix)
+                if self.options.wayland:
+                    packages.extend(['libwayland-dev%s' % arch_suffix,
+                                     'libxkbcommon-dev%s' % arch_suffix,
+                                     'wayland-protocols'])
+                if self.options.mir:
+                    packages.extend(['libmirclient-dev%s' % arch_suffix,
+                                     'libxkbcommon-dev%s' % arch_suffix])
                 for package in packages:
                     installer.install(package)
 
@@ -108,6 +119,8 @@ class SDL2Conan(ConanFile):
             self.options.remove("xscrnsaver")
             self.options.remove("xshape")
             self.options.remove("xvm")
+            self.options.remove('mir')
+            self.options.remove('wayland')
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
@@ -138,6 +151,8 @@ class SDL2Conan(ConanFile):
             cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
             cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
             cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
+            cmake.definitions['VIDEO_MIR'] = self.options.mir
+            cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
         cmake.configure(build_dir='build')
