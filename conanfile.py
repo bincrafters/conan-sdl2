@@ -20,14 +20,30 @@ class SDL2Conan(ConanFile):
                "jack": [True, False],
                "pulse": [True, False],
                "nas": [True, False],
-               "esd": [True, False]}
+               "esd": [True, False],
+               "x11": [True, False],
+               "xcursor": [True, False],
+               "xinerama": [True, False],
+               "xinput": [True, False],
+               "xrandr": [True, False],
+               "xscrnsaver": [True, False],
+               "xshape": [True, False],
+               "xvm": [True, False]}
     default_options = ("shared=False",
                        "directx=True",
                        "alsa=True",
                        "jack=True",
                        "pulse=True",
                        "nas=True",
-                       "esd=True")
+                       "esd=True",
+                       "x11=True",
+                       "xcursor=True",
+                       "xinerama=True",
+                       "xinput=True",
+                       "xrandr=True",
+                       "xscrnsaver=True",
+                       "xshape=True",
+                       "xvm=True")
     generators = ['cmake']
 
     def build_requirements(self):
@@ -54,6 +70,21 @@ class SDL2Conan(ConanFile):
                     packages.append('libaudio-dev%s' % arch_suffix)
                 if self.options.esd:
                     packages.append('libesd0-dev%s' % arch_suffix)
+                if self.options.x11:
+                    packages.extend(['libx11-dev%s' % arch_suffix,
+                                    'libxext-dev%s' % arch_suffix])
+                if self.options.xcursor:
+                    packages.append('libxcursor-dev%s' % arch_suffix)
+                if self.options.xinerama:
+                    packages.append('libxinerama-dev%s' % arch_suffix)
+                if self.options.xinput:
+                    packages.append('libxi-dev%s' % arch_suffix)
+                if self.options.xrandr:
+                    packages.append('libxrandr-dev%s' % arch_suffix)
+                if self.options.xscrnsaver:
+                    packages.append('libxss-dev%s' % arch_suffix)
+                if self.options.xvm:
+                    packages.append('libxxf86vm-dev%s' % arch_suffix)
                 for package in packages:
                     installer.install(package)
 
@@ -64,6 +95,14 @@ class SDL2Conan(ConanFile):
             self.options.remove("pulse")
             self.options.remove("nas")
             self.options.remove("esd")
+            self.options.remove("x11")
+            self.options.remove("xcursor")
+            self.options.remove("xinerama")
+            self.options.remove("xinput")
+            self.options.remove("xrandr")
+            self.options.remove("xscrnsaver")
+            self.options.remove("xshape")
+            self.options.remove("xvm")
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
@@ -86,6 +125,14 @@ class SDL2Conan(ConanFile):
             cmake.definitions['JACK'] = self.options.jack
             cmake.definitions['PULSEAUDIO'] = self.options.pulse
             cmake.definitions['NAS'] = self.options.nas
+            cmake.definitions['VIDEO_X11'] = self.options.x11
+            cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
+            cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
+            cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
+            cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
+            cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
+            cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
+            cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
         cmake.configure(build_dir='build')
