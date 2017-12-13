@@ -65,6 +65,9 @@ int main(int argc, char *argv[]) try
 #ifdef WITH_ARTS
     check_audio_driver("arts");
 #endif
+#ifdef WITH_DIRECTFB
+    check_video_driver("directfb");
+#endif
     return EXIT_SUCCESS;
 }
 catch (std::runtime_error & e)

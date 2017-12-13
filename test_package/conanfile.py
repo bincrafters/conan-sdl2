@@ -17,6 +17,7 @@ class TestPackageConan(ConanFile):
             cmake.definitions['WITH_PULSE'] = self.options['sdl2'].pulse
             cmake.definitions['WITH_ESD'] = self.options['sdl2'].esd
             cmake.definitions['WITH_ARTS'] = self.options['sdl2'].arts
+            cmake.definitions['WITH_DIRECTFB'] = self.options['sdl2'].directfb
         cmake.configure()
         cmake.build()
 

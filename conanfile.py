@@ -31,7 +31,8 @@ class SDL2Conan(ConanFile):
                "xshape": [True, False],
                "xvm": [True, False],
                "wayland": [True, False],
-               "mir": [True, False]}
+               "mir": [True, False],
+               "directfb": [True, False]}
     default_options = ("shared=False",
                        "directx=True",
                        "alsa=True",
@@ -49,7 +50,8 @@ class SDL2Conan(ConanFile):
                        "xshape=True",
                        "xvm=True",
                        "wayland=False",
-                       "mir=False")
+                       "mir=False",
+                       "directfb=True")
     generators = ['cmake']
 
     def build_requirements(self):
@@ -100,6 +102,8 @@ class SDL2Conan(ConanFile):
                 if self.options.mir:
                     packages.extend(['libmirclient-dev%s' % arch_suffix,
                                      'libxkbcommon-dev%s' % arch_suffix])
+                if self.options.directfb:
+                    packages.append('libdirectfb-dev%s' % arch_suffix)
                 for package in packages:
                     installer.install(package)
 
@@ -121,6 +125,7 @@ class SDL2Conan(ConanFile):
             self.options.remove("xvm")
             self.options.remove('mir')
             self.options.remove('wayland')
+            self.options.remove('directfb')
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
@@ -153,6 +158,7 @@ class SDL2Conan(ConanFile):
             cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
             cmake.definitions['VIDEO_MIR'] = self.options.mir
             cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
+            cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
         cmake.configure(build_dir='build')
