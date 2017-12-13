@@ -62,6 +62,9 @@ int main(int argc, char *argv[]) try
 #ifdef WITH_ESD
     check_audio_driver("esd");
 #endif
+#ifdef WITH_ARTS
+    check_audio_driver("arts");
+#endif
     return EXIT_SUCCESS;
 }
 catch (std::runtime_error & e)

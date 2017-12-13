@@ -21,6 +21,7 @@ class SDL2Conan(ConanFile):
                "pulse": [True, False],
                "nas": [True, False],
                "esd": [True, False],
+               "arts": [True, False],
                "x11": [True, False],
                "xcursor": [True, False],
                "xinerama": [True, False],
@@ -36,6 +37,7 @@ class SDL2Conan(ConanFile):
                        "pulse=True",
                        "nas=True",
                        "esd=True",
+                       "arts=False",
                        "x11=True",
                        "xcursor=True",
                        "xinerama=True",
@@ -70,6 +72,8 @@ class SDL2Conan(ConanFile):
                     packages.append('libaudio-dev%s' % arch_suffix)
                 if self.options.esd:
                     packages.append('libesd0-dev%s' % arch_suffix)
+                if self.options.arts:
+                    packages.append('artsc0-dev%s' % arch_suffix)
                 if self.options.x11:
                     packages.extend(['libx11-dev%s' % arch_suffix,
                                     'libxext-dev%s' % arch_suffix])
@@ -95,6 +99,7 @@ class SDL2Conan(ConanFile):
             self.options.remove("pulse")
             self.options.remove("nas")
             self.options.remove("esd")
+            self.options.remove("arts")
             self.options.remove("x11")
             self.options.remove("xcursor")
             self.options.remove("xinerama")
