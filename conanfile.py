@@ -139,6 +139,8 @@ class SDL2Conan(ConanFile):
         os.rename(extracted_dir, "sources")
 
     def build(self):
+        tools.replace_in_file(os.path.join('sources', 'CMakeLists.txt'),
+                              'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', '')
         cmake = CMake(self, generator='Ninja')
         cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
