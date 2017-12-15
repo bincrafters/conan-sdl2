@@ -165,7 +165,8 @@ class SDL2Conan(ConanFile):
                 cmake.definitions['CMAKE_C_FLAGS'] = '-m64'
                 cmake.definitions['CMAKE_CXX_FLAGS'] = '-m64'
 
-        cmake.definitions['HAVE_LIBC'] = True
+        if self.settings.compiler == 'Visual Studio' and not self.options.shared:
+            cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
         cmake.definitions['SDL_STATIC'] = not self.options.shared
         if self.settings.os == "Linux":
