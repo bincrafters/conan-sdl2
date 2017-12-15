@@ -54,6 +54,13 @@ class SDL2Conan(ConanFile):
                        "directfb=True")
     generators = ['cmake']
 
+    def run(self, command, output=True, cwd=None):
+        if self.settings.compiler == 'Visual Studio':
+            vcvars = tools.vcvars_command(self.settings)
+            command = '%s && %s' % (vcvars, command)
+
+        super(SDL2Conan, self).run(command, output, cwd)
+
     def build_requirements(self):
         self.build_requires("ninja_installer/[>=1.8.2]@bincrafters/stable")
 
