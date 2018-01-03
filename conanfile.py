@@ -6,13 +6,14 @@ import os
 
 
 class SDL2Conan(ConanFile):
-    name = "SDL2"
+    name = "sdl2"
     version = "2.0.7"
+    description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     url = "https://github.com/bincrafters/conan-sdl2"
-    description = "Simple DirectMedia Layer is a cross-platform development library designed to provide low level " \
-                  "access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
-    license = "https://hg.libsdl.org/SDL/file/5c8fc26757d7/COPYING.txt"
-    exports_sources = ["CMakeLists.txt", "LICENSE"]
+    license = "LGPL-2.1"
+    exports = ["LICENSE.md"]
+    exports_sources = ["CMakeLists.txt"]
+    generators = ['cmake']
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "directx": [True, False],
@@ -52,7 +53,6 @@ class SDL2Conan(ConanFile):
                        "wayland=False",
                        "mir=False",
                        "directfb=True")
-    generators = ['cmake']
 
     def run(self, command, output=True, cwd=None):
         if self.settings.compiler == 'Visual Studio':
