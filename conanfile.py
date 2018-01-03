@@ -6,7 +6,7 @@ import os
 
 
 class SDL2Conan(ConanFile):
-    name = "sdl2"
+    name = "SDL2"
     version = "2.0.7"
     url = "https://github.com/bincrafters/conan-sdl2"
     description = "Simple DirectMedia Layer is a cross-platform development library designed to provide low level " \
