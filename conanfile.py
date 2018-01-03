@@ -8,10 +8,10 @@ import os
 class SDL2Conan(ConanFile):
     name = "sdl2"
     version = "2.0.7"
-    url = "https://github.com/bincrafters/conan-libname"
+    url = "https://github.com/bincrafters/conan-sdl2"
     description = "Simple DirectMedia Layer is a cross-platform development library designed to provide low level " \
                   "access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
-    license = "hhttps://hg.libsdl.org/SDL/file/5c8fc26757d7/COPYING.txt"
+    license = "https://hg.libsdl.org/SDL/file/5c8fc26757d7/COPYING.txt"
     exports_sources = ["CMakeLists.txt", "LICENSE"]
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
