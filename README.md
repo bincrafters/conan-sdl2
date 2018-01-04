@@ -43,5 +43,3 @@ The contents of this GIT repository are completely separate from the software be
 ### License for Bincrafters recipe: 
 
     ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md 
-
-	
