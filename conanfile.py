@@ -54,13 +54,6 @@ class SDL2Conan(ConanFile):
                        "mir=False",
                        "directfb=True")
 
-    def run(self, command, output=True, cwd=None):
-        if self.settings.compiler == 'Visual Studio':
-            vcvars = tools.vcvars_command(self.settings)
-            command = '%s && %s' % (vcvars, command)
-
-        super(SDL2Conan, self).run(command, output, cwd)
-
     def build_requirements(self):
         self.build_requires("ninja_installer/[>=1.8.2]@bincrafters/stable")
 
@@ -71,7 +64,6 @@ class SDL2Conan(ConanFile):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
                 installer = tools.SystemPackageTool()
-                arch_suffix = ''
                 if self.settings.arch == "x86":
                     arch_suffix = ':i386'
                 else:
@@ -148,6 +140,13 @@ class SDL2Conan(ConanFile):
         os.rename(extracted_dir, "sources")
 
     def build(self):
+        if self.settings.compiler == 'Visual Studio':
+            with tools.vcvars(self.settings, filter_known_paths=False):
+                self.build_cmake()
+        else:
+            self.build_cmake()
+
+    def build_cmake(self):
         tools.replace_in_file(os.path.join('sources', 'CMakeLists.txt'),
                               'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', '')
         cmake = CMake(self, generator='Ninja')
