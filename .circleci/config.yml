@@ -2,12 +2,24 @@ version: 2
 .conan-steps: &conan-steps
   steps:
     - checkout
+    - restore_cache:
+        keys:
+          - conan-cache
     - run:
         name: Update Conan package
-        command: .travis/install.sh
+        command: |
+          chmod +x .circleci/install.sh
+          .circleci/install.sh
+    - save_cache:
+        key: conan-cache
+        paths:
+            - ~/Library/Caches/pip
+            - ~/Library/Caches/Homebrew
     - run:
         name: Build recipe
-        command: .travis/run.sh
+        command: |
+          chmod +x .circleci/run.sh
+          .circleci/run.sh
 
 jobs:
   xcode8:
