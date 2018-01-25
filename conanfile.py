@@ -14,6 +14,8 @@ class SDL2Conan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
+    source_subfolder = "source_subfolder"
+    build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "directx": [True, False],
@@ -54,24 +56,12 @@ class SDL2Conan(ConanFile):
                        "mir=False",
                        "directfb=True")
 
-    def run(self, command, output=True, cwd=None):
-        if self.settings.compiler == 'Visual Studio':
-            vcvars = tools.vcvars_command(self.settings)
-            command = '%s && %s' % (vcvars, command)
-
-        super(SDL2Conan, self).run(command, output, cwd)
-
-    def build_requirements(self):
-        self.build_requires("ninja_installer/[>=1.8.2]@bincrafters/stable")
-
-    def requirements(self):
-        self.requires.add("libiconv/[>=1.15]@bincrafters/stable")
-
+    requires = "libiconv/[>=1.15]@bincrafters/stable"
+    
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
                 installer = tools.SystemPackageTool()
-                arch_suffix = ''
                 if self.settings.arch == "x86":
                     arch_suffix = ':i386'
                 else:
@@ -145,11 +135,21 @@ class SDL2Conan(ConanFile):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
-        os.rename(extracted_dir, "sources")
+        os.rename(extracted_dir, self.source_subfolder)
 
     def build(self):
-        tools.replace_in_file(os.path.join('sources', 'CMakeLists.txt'),
-                              'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', '')
+        if self.settings.compiler == 'Visual Studio':
+            with tools.vcvars(self.settings, filter_known_paths=False):
+                self.build_cmake()
+        else:
+            self.build_cmake()
+
+    def build_cmake(self):
+        tools.replace_in_file(
+                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', 
+                '')
+
         cmake = CMake(self, generator='Ninja')
 
         env = dict()
@@ -194,7 +194,7 @@ class SDL2Conan(ConanFile):
             cmake.install()
 
     def package(self):
-        self.copy(pattern="COPYING.txt", src="sources")
+        self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)

@@ -1,8 +1,8 @@
 ## Package Status
 
-| Bintray | Appveyor | Travis | 
-|---------|-----------|--------|
-|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/sdl2%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/sdl2%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/kpouy55qi0un99ir?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-sdl2)|[![Build Status](https://travis-ci.org/bincrafters/conan-sdl2.svg?branch=testing%2F2.0.7)](https://travis-ci.org/bincrafters/conan-sdl2)|
+| Bintray | Windows | Linux | OSX |
+|---------|------------|--------|------|
+|[![Download](https://api.bintray.com/packages/bincrafters/public-conan/sdl2%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/sdl2%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-sdl2?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-sdl2)|[![Build Status](https://travis-ci.org/bincrafters/conan-sdl2.svg)](https://travis-ci.org/bincrafters/conan-sdl2)|[![CircleCI](https://circleci.com/gh/bincrafters/conan-sdl2.svg?style=svg)](https://circleci.com/gh/bincrafters/conan-sdl2)|
 
 ## Conan.io Information
 
