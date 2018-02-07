@@ -197,23 +197,34 @@ class SDL2Conan(ConanFile):
     def package(self):
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
 
+
+    def add_libraries_from_pc(self, library):
+        pkg_config = tools.PkgConfig(library, static=not self.options.shared)
+        libs = [lib[2:] for lib in pkg_config.libs_only_l]  # cut -l prefix
+        lib_paths = [lib[2:] for lib in pkg_config.libs_only_L]  # cut -L prefix
+        self.cpp_info.libs.extend(libs)
+        self.cpp_info.libdirs.extend(lib_paths)
+        self.cpp_info.sharedlinkflags.extend(pkg_config.libs_only_other)
+        self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
+
+
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
             if self.options.alsa:
-                self.cpp_info.libs.append('asound')
+                self.add_libraries_from_pc('alsa')
             if self.options.jack:
-                self.cpp_info.libs.append('jack')
+                self.add_libraries_from_pc('jack')
             if self.options.pulse:
-                self.cpp_info.libs.append('pulse')
+                self.add_libraries_from_pc('libpulse')
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
-                self.cpp_info.libs.append('esd')
+                self.add_libraries_from_pc('esound')
             if self.options.directfb:
-                self.cpp_info.libs.extend(['directfb', 'fusion', 'direct'])
+                self.add_libraries_from_pc('directfb')
         elif self.settings.os == "Macos":
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
