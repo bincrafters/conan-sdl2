@@ -211,6 +211,8 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
                 self.cpp_info.libs.append('esd')
+            if self.options.directfb:
+                self.cpp_info.libs.append('directfb', 'fusion', 'direct')
         elif self.settings.os == "Macos":
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
