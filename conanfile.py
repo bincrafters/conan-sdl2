@@ -57,7 +57,7 @@ class SDL2Conan(ConanFile):
                        "directfb=True")
 
     requires = "libiconv/[>=1.15]@bincrafters/stable"
-    
+
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
@@ -147,7 +147,7 @@ class SDL2Conan(ConanFile):
     def build_cmake(self):
         tools.replace_in_file(
                 os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', 
+                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
                 '')
 
         cmake = CMake(self, generator='Ninja')
