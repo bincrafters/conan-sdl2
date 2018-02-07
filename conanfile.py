@@ -59,6 +59,7 @@ class SDL2Conan(ConanFile):
     requires = "libiconv/[>=1.15]@bincrafters/stable"
 
     def system_requirements(self):
+        self.global_system_requirements = True
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
                 installer = tools.SystemPackageTool()
