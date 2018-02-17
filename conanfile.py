@@ -197,7 +197,6 @@ class SDL2Conan(ConanFile):
     def package(self):
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
 
-
     def add_libraries_from_pc(self, library):
         pkg_config = tools.PkgConfig(library, static=not self.options.shared)
         libs = [lib[2:] for lib in pkg_config.libs_only_l]  # cut -l prefix
@@ -206,7 +205,6 @@ class SDL2Conan(ConanFile):
         self.cpp_info.libdirs.extend(lib_paths)
         self.cpp_info.sharedlinkflags.extend(pkg_config.libs_only_other)
         self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
-
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
