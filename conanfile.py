@@ -152,19 +152,6 @@ class SDL2Conan(ConanFile):
 
         cmake = CMake(self, generator='Ninja')
 
-        env = dict()
-
-        # TODO : figure out the correct way
-        if self.settings.os == 'Linux':
-            if self.settings.arch == 'x86':
-                cmake.definitions['CMAKE_C_FLAGS'] = '-m32'
-                cmake.definitions['CMAKE_CXX_FLAGS'] = '-m32'
-                if tools.detected_architecture() == "x86_64":
-                    env['PKG_CONFIG_PATH'] = '/usr/lib/i386-linux-gnu/pkgconfig'
-            elif self.settings.arch == 'x86_64':
-                cmake.definitions['CMAKE_C_FLAGS'] = '-m64'
-                cmake.definitions['CMAKE_CXX_FLAGS'] = '-m64'
-
         if self.settings.compiler == 'Visual Studio' and not self.options.shared:
             cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
@@ -188,10 +175,9 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        with tools.environment_append(env):
-            cmake.configure(build_dir='build')
-            cmake.build()
-            cmake.install()
+        cmake.configure(build_dir='build')
+        cmake.build()
+        cmake.install()
 
     def package(self):
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
