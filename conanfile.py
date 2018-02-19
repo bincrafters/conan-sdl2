@@ -66,7 +66,7 @@ class SDL2Conan(ConanFile):
                     arch_suffix = ':i386'
                 else:
                     arch_suffix = ':amd64'
-                packages = ['pkg-config']
+                packages = ['pkg-config%s' % arch_suffix]
                 if self.options.alsa:
                     packages.append('libasound2-dev%s' % arch_suffix)
                 if self.options.jack:
