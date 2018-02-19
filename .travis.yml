@@ -5,6 +5,9 @@ linux: &linux
    python: "3.6"
    services:
      - docker
+osx: &osx
+   os: osx
+   language: generic
 matrix:
    include:
       - <<: *linux
