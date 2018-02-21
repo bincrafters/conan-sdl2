@@ -56,8 +56,8 @@ class SDL2Conan(ConanFile):
                        "mir=False",
                        "directfb=True")
 
-    requires = "libiconv/[>=1.15]@bincrafters/stable"
-    
+    requires = "libiconv/1.15@bincrafters/stable"
+
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
@@ -66,7 +66,7 @@ class SDL2Conan(ConanFile):
                     arch_suffix = ':i386'
                 else:
                     arch_suffix = ':amd64'
-                packages = ['pkg-config']
+                packages = ['pkg-config%s' % arch_suffix]
                 if self.options.alsa:
                     packages.append('libasound2-dev%s' % arch_suffix)
                 if self.options.jack:
@@ -147,23 +147,10 @@ class SDL2Conan(ConanFile):
     def build_cmake(self):
         tools.replace_in_file(
                 os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")', 
+                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
                 '')
 
         cmake = CMake(self, generator='Ninja')
-
-        env = dict()
-
-        # TODO : figure out the correct way
-        if self.settings.os == 'Linux':
-            if self.settings.arch == 'x86':
-                cmake.definitions['CMAKE_C_FLAGS'] = '-m32'
-                cmake.definitions['CMAKE_CXX_FLAGS'] = '-m32'
-                if tools.detected_architecture() == "x86_64":
-                    env['PKG_CONFIG_PATH'] = '/usr/lib/i386-linux-gnu/pkgconfig'
-            elif self.settings.arch == 'x86_64':
-                cmake.definitions['CMAKE_C_FLAGS'] = '-m64'
-                cmake.definitions['CMAKE_CXX_FLAGS'] = '-m64'
 
         if self.settings.compiler == 'Visual Studio' and not self.options.shared:
             cmake.definitions['HAVE_LIBC'] = True
@@ -188,13 +175,21 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        with tools.environment_append(env):
-            cmake.configure(build_dir='build')
-            cmake.build()
-            cmake.install()
+        cmake.configure(build_dir='build')
+        cmake.build()
+        cmake.install()
 
     def package(self):
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
+
+    def add_libraries_from_pc(self, library):
+        pkg_config = tools.PkgConfig(library, static=not self.options.shared)
+        libs = [lib[2:] for lib in pkg_config.libs_only_l]  # cut -l prefix
+        lib_paths = [lib[2:] for lib in pkg_config.libs_only_L]  # cut -L prefix
+        self.cpp_info.libs.extend(libs)
+        self.cpp_info.libdirs.extend(lib_paths)
+        self.cpp_info.sharedlinkflags.extend(pkg_config.libs_only_other)
+        self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
@@ -202,15 +197,17 @@ class SDL2Conan(ConanFile):
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
             if self.options.alsa:
-                self.cpp_info.libs.append('asound')
+                self.add_libraries_from_pc('alsa')
             if self.options.jack:
-                self.cpp_info.libs.append('jack')
+                self.add_libraries_from_pc('jack')
             if self.options.pulse:
-                self.cpp_info.libs.append('pulse')
+                self.add_libraries_from_pc('libpulse')
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
-                self.cpp_info.libs.append('esd')
+                self.add_libraries_from_pc('esound')
+            if self.options.directfb:
+                self.add_libraries_from_pc('directfb')
         elif self.settings.os == "Macos":
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
