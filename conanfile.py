@@ -18,6 +18,7 @@ class SDL2Conan(ConanFile):
     build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
+               "fPIC": [True, False],
                "directx": [True, False],
                "alsa": [True, False],
                "jack": [True, False],
@@ -37,6 +38,7 @@ class SDL2Conan(ConanFile):
                "mir": [True, False],
                "directfb": [True, False]}
     default_options = ("shared=False",
+                       "fPIC=True",
                        "directx=True",
                        "alsa=True",
                        "jack=True",
@@ -130,6 +132,8 @@ class SDL2Conan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        if self.settings.compiler == 'Visual Studio':
+            del self.options.fPIC
 
     def source(self):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
@@ -151,7 +155,8 @@ class SDL2Conan(ConanFile):
                 '')
 
         cmake = CMake(self, generator='Ninja')
-
+        if self.settings.compiler != 'Visual Studio':
+            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         if self.settings.compiler == 'Visual Studio' and not self.options.shared:
             cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
