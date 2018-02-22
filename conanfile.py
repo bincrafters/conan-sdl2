@@ -56,7 +56,7 @@ class SDL2Conan(ConanFile):
                        "xvm=True",
                        "wayland=False",
                        "mir=False",
-                       "directfb=True")
+                       "directfb=False")
 
     requires = "libiconv/1.15@bincrafters/stable"
 
