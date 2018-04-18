@@ -154,7 +154,7 @@ class SDL2Conan(ConanFile):
                 'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
                 '')
 
-        cmake = CMake(self, generator='Ninja')
+        cmake = CMake(self)
         if self.settings.compiler != 'Visual Studio':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         if self.settings.compiler == 'Visual Studio' and not self.options.shared:
