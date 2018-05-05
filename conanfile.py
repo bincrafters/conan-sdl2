@@ -197,6 +197,10 @@ class SDL2Conan(ConanFile):
         self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
 
     def package_info(self):
+        sdl2_config = 'sdl2-config.exe' if self.settings.os == 'Windows' else 'sdl2-config'
+        sdl2_config = os.path.join(self.package_folder, 'bin', sdl2_config)
+        self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
+        self.env_info.SDL2_CONFIG = sdl2_config
         self.cpp_info.libs = tools.collect_libs(self)
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
