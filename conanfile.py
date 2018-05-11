@@ -225,6 +225,8 @@ class SDL2Conan(ConanFile):
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
                 self.cpp_info.exelinkflags.append("-framework %s" % framework)
+            if not self.options.iconv:
+                self.cpp_info.libs.append('iconv')
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
         elif self.settings.os == "Windows":
             self.cpp_info.libs.extend(['imm32', 'winmm', 'version'])
