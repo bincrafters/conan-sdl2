@@ -37,7 +37,8 @@ class SDL2Conan(ConanFile):
                "wayland": [True, False],
                "mir": [True, False],
                "directfb": [True, False],
-               "iconv": [True, False]}
+               "iconv": [True, False],
+               "sdl2main": [True, False]}
     default_options = ("shared=False",
                        "fPIC=True",
                        "directx=True",
@@ -58,7 +59,8 @@ class SDL2Conan(ConanFile):
                        "wayland=False",
                        "mir=False",
                        "directfb=False",
-                       "iconv=False")
+                       "iconv=False",
+                       "sdl2main=True")
 
     def requirements(self):
         if self.options.iconv:
@@ -200,12 +202,17 @@ class SDL2Conan(ConanFile):
         self.cpp_info.sharedlinkflags.extend(pkg_config.libs_only_other)
         self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
 
+    def package_id(self):
+        del self.info.options.sdl2main
+
     def package_info(self):
         sdl2_config = 'sdl2-config.exe' if self.settings.os == 'Windows' else 'sdl2-config'
         sdl2_config = os.path.join(self.package_folder, 'bin', sdl2_config)
         self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
         self.cpp_info.libs = tools.collect_libs(self)
+        if not self.options.sdl2main:
+            self.cpp_info.libs = list(filter(lambda lib: 'main' not in lib, self.cpp_info.libs))
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
