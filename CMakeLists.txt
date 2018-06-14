@@ -3,4 +3,12 @@ project(cmake_wrapper)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
+if(UNIX AND NOT APPLE)
+  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+      add_definitions("-DGBM_BO_USE_CURSOR=2")
+    endif()
+  endif()
+endif()
+
 add_subdirectory(source_subfolder)
