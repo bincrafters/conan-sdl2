@@ -197,8 +197,10 @@ class SDL2Conan(ConanFile):
     def package(self):
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
 
-    def add_libraries_from_pc(self, library):
-        pkg_config = tools.PkgConfig(library, static=not self.options.shared)
+    def add_libraries_from_pc(self, library, static=None):
+        if static is None:
+            static = not self.options.shared
+        pkg_config = tools.PkgConfig(library, static=static)
         libs = [lib[2:] for lib in pkg_config.libs_only_l]  # cut -l prefix
         lib_paths = [lib[2:] for lib in pkg_config.libs_only_L]  # cut -L prefix
         self.cpp_info.libs.extend(libs)
@@ -225,7 +227,7 @@ class SDL2Conan(ConanFile):
             if self.options.jack:
                 self.add_libraries_from_pc('jack')
             if self.options.pulse:
-                self.add_libraries_from_pc('libpulse')
+                self.add_libraries_from_pc('libpulse', False)
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
