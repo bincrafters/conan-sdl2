@@ -46,7 +46,7 @@ class SDL2Conan(ConanFile):
                        "jack=True",
                        "pulse=True",
                        "nas=True",
-                       "esd=True",
+                       "esd=False",
                        "arts=False",
                        "x11=True",
                        "xcursor=True",
