@@ -14,6 +14,7 @@ class SDL2Conan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
+    build_requires = "cmake_installer/[>2.8.11]@conan/stable"
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
