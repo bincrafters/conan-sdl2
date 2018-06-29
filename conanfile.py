@@ -10,6 +10,8 @@ class SDL2Conan(ConanFile):
     version = "2.0.8"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     url = "https://github.com/bincrafters/conan-sdl2"
+    homepage = "https://www.libsdl.org/"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "LGPL-2.1"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
@@ -75,6 +77,10 @@ class SDL2Conan(ConanFile):
                 else:
                     arch_suffix = ':amd64'
                 packages = ['pkg-config%s' % arch_suffix]
+                packages.append('mesa-common-dev%s' % arch_suffix)
+                packages.append('libegl1-mesa-dev%s' % arch_suffix)
+                packages.append('libgbm-dev%s' % arch_suffix)
+                packages.append('libdrm-dev%s' % arch_suffix)
                 if self.options.alsa:
                     packages.append('libasound2-dev%s' % arch_suffix)
                 if self.options.jack:
