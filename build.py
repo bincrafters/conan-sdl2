@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import os
+from conans import tools
 from bincrafters import build_template_default
 
 def add_build_requires(builds):
