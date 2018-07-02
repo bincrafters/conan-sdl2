@@ -74,7 +74,7 @@ class SDL2Conan(ConanFile):
                 installer = tools.SystemPackageTool()
                 if self.settings.arch == "x86":
                     arch_suffix = ':i386'
-                else:
+                elif self.settings.arch == "x86_64":
                     arch_suffix = ':amd64'
                 packages = ['pkg-config%s' % arch_suffix]
                 packages.append('mesa-common-dev%s' % arch_suffix)
@@ -119,6 +119,48 @@ class SDL2Conan(ConanFile):
                     packages.append('libdirectfb-dev%s' % arch_suffix)
                 for package in packages:
                     installer.install(package)
+            if tools.os_info.with_yum:
+                installer = tools.SystemPackageTool()
+                if self.settings.arch == "x86":
+                    arch_suffix = '.i686'
+                elif self.settings.arch == 'x86_64':
+                    arch_suffix = '.x86_64'
+                packages = ['pkgconfig%s' % arch_suffix]
+                packages.append('mesa-libGL-devel%s' % arch_suffix)
+                packages.append('mesa-libEGL-devel%s' % arch_suffix)
+                packages.append('gdm-devel%s' % arch_suffix)
+                packages.append('libdrm-devel%s' % arch_suffix)
+                if self.options.alsa:
+                    packages.append('alsa-lib-devel%s' % arch_suffix)
+                if self.options.jack:
+                    packages.append('jack-audio-connection-kit-devel%s' % arch_suffix)
+                if self.options.pulse:
+                    packages.append('pulseaudio-libs-devel%s' % arch_suffix)
+                if self.options.nas:
+                    packages.append('nas-devel%s' % arch_suffix)
+                if self.options.esd:
+                    packages.append('esound-devel%s' % arch_suffix)
+                if self.options.x11:
+                    packages.extend(['libX11-devel%s' % arch_suffix,
+                                    'libXext-devel%s' % arch_suffix])
+                if self.options.xcursor:
+                    packages.append('libXcursor-devel%s' % arch_suffix)
+                if self.options.xinerama:
+                    packages.append('libXinerama-devel%s' % arch_suffix)
+                if self.options.xinput:
+                    packages.append('libXi-devel%s' % arch_suffix)
+                if self.options.xrandr:
+                    packages.append('libXrandr-devel%s' % arch_suffix)
+                if self.options.xscrnsaver:
+                    packages.append('libXScrnSaver-devel%s' % arch_suffix)
+                if self.options.xvm:
+                    packages.append('libXxf86vm-devel%s' % arch_suffix)
+                if self.options.wayland:
+                    packages.extend(['wayland-devel%s' % arch_suffix,
+                                    'libxkbcommon-devel%s' % arch_suffix,
+                                    'wayland-protocols-devel'])
+                for package in packages:
+                    installer.install(package)
 
     def config_options(self):
         if self.settings.os != "Linux":
@@ -160,7 +202,36 @@ class SDL2Conan(ConanFile):
         else:
             self.build_cmake()
 
+    def check_pkg_config(self, option, package_name):
+        if option:
+            pkg_config = tools.PkgConfig(package_name)
+            if not pkg_config.provides:
+                raise Exception('package %s is not available' % package_name)
+
+    def check_dependencies(self):
+        if self.settings.os == 'Linux':
+            self.check_pkg_config(True, 'egl')
+            self.check_pkg_config(True, 'libdrm')
+            self.check_pkg_config(self.options.alsa, 'alsa')
+            self.check_pkg_config(self.options.jack, 'jack')
+            self.check_pkg_config(self.options.pulse, 'libpulse')
+            self.check_pkg_config(self.options.esd, 'esound')
+            self.check_pkg_config(self.options.x11, 'x11')
+            self.check_pkg_config(self.options.x11, 'xext')
+            self.check_pkg_config(self.options.xcursor, 'xcursor')
+            self.check_pkg_config(self.options.xinerama, 'xinerama')
+            self.check_pkg_config(self.options.xinput, 'xi')
+            self.check_pkg_config(self.options.xrandr, 'xrandr')
+            self.check_pkg_config(self.options.xscrnsaver, 'xscrnsaver')
+            self.check_pkg_config(self.options.xvm, 'xxf86vm')
+            self.check_pkg_config(self.options.wayland, 'wayland-client')
+            self.check_pkg_config(self.options.wayland, 'xkbcommon')
+            self.check_pkg_config(self.options.wayland, 'wayland-protocols')
+            self.check_pkg_config(self.options.mir, 'mirclient')
+            self.check_pkg_config(self.options.directfb, 'directfb')
+
     def build_cmake(self):
+        self.check_dependencies()
         tools.replace_in_file(
                 os.path.join(self.source_subfolder, 'CMakeLists.txt'),
                 'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
