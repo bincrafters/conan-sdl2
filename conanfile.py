@@ -315,4 +315,4 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.libs.append('iconv')
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
         elif self.settings.os == "Windows":
-            self.cpp_info.libs.extend(['imm32', 'winmm', 'version'])
+            self.cpp_info.libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'shell32'])
