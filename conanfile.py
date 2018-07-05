@@ -238,8 +238,9 @@ class SDL2Conan(ConanFile):
                 '')
 
         cmake = CMake(self)
-        if self.settings.compiler != 'Visual Studio':
-            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+        if self.settings.os != 'Windows':
+            if not self.options.shared:
+                cmake.definitions['SDL_STATIC_PIC'] = self.options.fPIC
         if self.settings.compiler == 'Visual Studio' and not self.options.shared:
             cmake.definitions['HAVE_LIBC'] = True
         cmake.definitions['SDL_SHARED'] = self.options.shared
