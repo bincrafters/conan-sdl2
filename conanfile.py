@@ -17,7 +17,6 @@ class SDL2Conan(ConanFile):
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
     source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "fPIC": [True, False],
@@ -125,7 +124,7 @@ class SDL2Conan(ConanFile):
                     arch_suffix = '.i686'
                 elif self.settings.arch == 'x86_64':
                     arch_suffix = '.x86_64'
-                packages = ['pkgconfig%s' % arch_suffix]
+                packages = ['pkgconf-pkg-config%s' % arch_suffix]
                 packages.append('mesa-libGL-devel%s' % arch_suffix)
                 packages.append('mesa-libEGL-devel%s' % arch_suffix)
                 packages.append('gdm-devel%s' % arch_suffix)
@@ -233,7 +232,7 @@ class SDL2Conan(ConanFile):
     def build_cmake(self):
         self.check_dependencies()
         tools.replace_in_file(
-                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+                os.path.join(self.source_folder, self.source_subfolder, 'CMakeLists.txt'),
                 'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
                 '')
 
@@ -264,7 +263,7 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir='build')
+        cmake.configure(build_dir=self.install_folder)
         cmake.build()
         cmake.install()
 
