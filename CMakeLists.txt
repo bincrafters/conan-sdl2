@@ -1,6 +1,6 @@
 project(cmake_wrapper)
 
-include(conanbuildinfo.cmake)
+include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 conan_basic_setup()
 
 if(UNIX AND NOT APPLE)
