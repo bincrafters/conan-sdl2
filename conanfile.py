@@ -125,11 +125,14 @@ class SDL2Conan(ConanFile):
                     arch_suffix = '.i686'
                 elif self.settings.arch == 'x86_64':
                     arch_suffix = '.x86_64'
-                packages = ['pkgconfig%s' % arch_suffix]
-                packages.append('mesa-libGL-devel%s' % arch_suffix)
-                packages.append('mesa-libEGL-devel%s' % arch_suffix)
-                packages.append('gdm-devel%s' % arch_suffix)
-                packages.append('libdrm-devel%s' % arch_suffix)
+                packages = ['mesa-libGL-devel%s' % arch_suffix,
+                            'mesa-libEGL-devel%s' % arch_suffix,
+                            'gdm-devel%s' % arch_suffix,
+                            'libdrm-devel%s' % arch_suffix]
+                if tools.os_info.linux_distro == 'centos':
+                    packages.append('pkgconfig%s' % arch_suffix)
+                elif tools.os_info.linux_distro == 'fedora':
+                    packages.append('pkgconf-pkg-config%s' % arch_suffix)
                 if self.options.alsa:
                     packages.append('alsa-lib-devel%s' % arch_suffix)
                 if self.options.jack:
