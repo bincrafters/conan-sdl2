@@ -197,6 +197,10 @@ class SDL2Conan(ConanFile):
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
+        tools.replace_in_file(
+                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
+                '')
 
     def build(self):
         if self.settings.compiler == 'Visual Studio':
@@ -233,14 +237,11 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.mir, 'mirclient')
             self.check_pkg_config(self.options.directfb, 'directfb')
 
-    def build_cmake(self):
+    def configure_cmake(self):
         self.check_dependencies()
-        tools.replace_in_file(
-                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
-                '')
 
         cmake = CMake(self)
+        cmake.definitions['CONAN_INSTALL_FOLDER'] = self.install_folder
         if self.settings.os != 'Windows':
             if not self.options.shared:
                 cmake.definitions['SDL_STATIC_PIC'] = self.options.fPIC
@@ -267,11 +268,16 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir='build')
+        cmake.configure(build_dir=self.build_subfolder)
+        return cmake
+
+    def build_cmake(self):
+        cmake = self.configure_cmake()
         cmake.build()
-        cmake.install()
 
     def package(self):
+        cmake = self.configure_cmake()
+        cmake.install()
         self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
 
     def add_libraries_from_pc(self, library, static=None):
@@ -295,7 +301,7 @@ class SDL2Conan(ConanFile):
         self.env_info.SDL2_CONFIG = sdl2_config
         self.cpp_info.libs = tools.collect_libs(self)
         if not self.options.sdl2main:
-            self.cpp_info.libs = list(filter(lambda lib: 'main' not in lib, self.cpp_info.libs))
+            self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
