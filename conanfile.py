@@ -14,7 +14,7 @@ class SDL2Conan(ConanFile):
     url = "https://github.com/bincrafters/conan-sdl2"
     homepage = "https://www.libsdl.org/"
     author = "Bincrafters <bincrafters@gmail.com>"
-    license = "LGPL-2.1"
+    license = "Zlib"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "cmake.patch"]
     generators = ['cmake']
