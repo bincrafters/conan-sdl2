@@ -10,7 +10,7 @@ class SDL2Conan(ConanFile):
     version = "2.0.7"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     url = "https://github.com/bincrafters/conan-sdl2"
-    license = "LGPL-2.1"
+    license = "zlib"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
