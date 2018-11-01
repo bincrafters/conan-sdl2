@@ -8,11 +8,11 @@ import os
 
 class SDL2Conan(ConanFile):
     name = "sdl2"
-    version = "2.0.8"
+    version = "2.0.9"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     topics = ("conan", "sdl2", "audio", "keyboard", "graphics", "opengl")
     url = "https://github.com/bincrafters/conan-sdl2"
-    homepage = "https://www.libsdl.org/"
+    homepage = "https://www.libsdl.org"
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "Zlib"
     exports = ["LICENSE.md"]
@@ -200,7 +200,7 @@ class SDL2Conan(ConanFile):
 
     def source(self):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
-        tools.get(source_url)
+        tools.get(source_url, sha256="255186dc676ecd0c1dbf10ec8a2cc5d6869b5079d8a38194c2aecdff54b324b1")
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
@@ -244,6 +244,7 @@ class SDL2Conan(ConanFile):
         self.check_dependencies()
 
         cmake = CMake(self)
+        # FIXME: self.install_folder not defined? Neccessary?
         cmake.definitions['CONAN_INSTALL_FOLDER'] = self.install_folder
         if self.settings.os != 'Windows':
             if not self.options.shared:
