@@ -16,8 +16,8 @@ class SDL2Conan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "fPIC": [True, False],
@@ -196,11 +196,21 @@ class SDL2Conan(ConanFile):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
-        tools.replace_in_file(
-                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
-                '')
+        os.rename(extracted_dir, self._source_subfolder)
+        tools.replace_in_file(os.path.join(self._source_subfolder, 'CMakeLists.txt'),
+                              r'''if(NOT ANDROID)
+        install(CODE "
+          execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+          \"libSDL2-2.0.${SOEXT}\" \"libSDL2.${SOEXT}\")")
+        install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")''',
+                              r'''if(NOT ANDROID AND NOT APPLE)
+        get_property(SDL2_OUTPUT_LOCATION TARGET SDL2 PROPERTY LIBRARY_OUTPUT_DIRECTORY)
+        get_property(SDL2_OUTPUT_NAME TARGET SDL2 PROPERTY OUTPUT_NAME)
+        add_custom_command(TARGET SDL2 POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E create_symlink
+                "lib${SDL2_PREFIX}${SDL2_OUTPUT_NAME}$<$<CONFIG:DEBUG>:d>.${SOEXT}" "libSDL2.${SOEXT}"
+            WORKING_DIRECTORY "${SDL2_OUTPUT_LOCATION}")
+        install(FILES "${SDL2_OUTPUT_LOCATION}/libSDL2.${SOEXT}" DESTINATION "lib${LIB_SUFFIX}")''')
 
     def build(self):
         if self.settings.compiler == 'Visual Studio':
@@ -268,17 +278,17 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir=self.build_subfolder)
         return cmake
 
     def build_cmake(self):
         cmake = self.configure_cmake()
+        cmake.configure(build_dir=os.path.join(self.build_folder, self._build_subfolder))
         cmake.build()
 
     def package(self):
         cmake = self.configure_cmake()
-        cmake.install()
-        self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
+        cmake.install(build_dir=os.path.join(self.build_folder, self._build_subfolder))
+        self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         if self.settings.compiler == 'Visual Studio':
             self.copy(pattern="*.pdb", dst="lib", src=".")
 
