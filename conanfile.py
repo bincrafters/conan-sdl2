@@ -14,7 +14,7 @@ class SDL2Conan(ConanFile):
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "LGPL-2.1"
     exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ["CMakeLists.txt", "cmake.patch"]
     generators = ['cmake']
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
@@ -197,10 +197,7 @@ class SDL2Conan(ConanFile):
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
-        tools.replace_in_file(
-                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
-                '')
+        tools.patch(base_path=self.source_subfolder, patch_file="cmake.patch")
 
     def build(self):
         if self.settings.compiler == 'Visual Studio':
@@ -301,7 +298,7 @@ class SDL2Conan(ConanFile):
         sdl2_config = os.path.join(self.package_folder, 'bin', sdl2_config)
         self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
