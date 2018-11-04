@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8f1e828..96ca868 100644
+index 8f1e828..c6b1723 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -47,11 +47,7 @@ set(SDL_INTERFACE_AGE 0)
@@ -45,7 +45,12 @@ index 8f1e828..96ca868 100644
  endif()
  
  ##### Tests #####
-@@ -1819,7 +1806,7 @@ if(NOT (WINDOWS OR CYGWIN))
+@@ -1815,11 +1802,11 @@ if(NOT (WINDOWS OR CYGWIN))
+     else()
+         set(SOEXT "so")
+     endif()
+-    if(NOT ANDROID)
++    if(NOT (ANDROID OR APPLE))
          install(CODE "
            execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
            \"libSDL2-2.0.${SOEXT}\" \"libSDL2.${SOEXT}\")")
