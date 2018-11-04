@@ -17,7 +17,7 @@ class SDL2Conan(ConanFile):
     exports_sources = ["CMakeLists.txt"]
     generators = ['cmake']
     _source_subfolder = "source_subfolder"
-    _build_subfolder = "build_subfolder"
+    no_copy_source = True
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "fPIC": [True, False],
@@ -282,12 +282,12 @@ class SDL2Conan(ConanFile):
 
     def build_cmake(self):
         cmake = self.configure_cmake()
-        cmake.configure(build_dir=os.path.join(self.build_folder, self._build_subfolder))
+        cmake.configure(build_dir=self.build_folder)
         cmake.build()
 
     def package(self):
         cmake = self.configure_cmake()
-        cmake.install(build_dir=os.path.join(self.build_folder, self._build_subfolder))
+        cmake.install(build_dir=self.build_folder)
         self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         if self.settings.compiler == 'Visual Studio':
             self.copy(pattern="*.pdb", dst="lib", src=".")
