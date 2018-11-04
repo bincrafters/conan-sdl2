@@ -16,8 +16,8 @@ class SDL2Conan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "cmake.patch"]
     generators = ['cmake']
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "fPIC": [True, False],
@@ -196,8 +196,8 @@ class SDL2Conan(ConanFile):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
-        tools.patch(base_path=self.source_subfolder, patch_file="cmake.patch")
+        os.rename(extracted_dir, self._source_subfolder)
+        tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
 
     def build(self):
         if self.settings.compiler == 'Visual Studio':
@@ -265,7 +265,7 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir=self.build_subfolder)
+        cmake.configure(build_dir=os.path.join(self.build_folder, self._build_subfolder))
         return cmake
 
     def build_cmake(self):
@@ -274,8 +274,8 @@ class SDL2Conan(ConanFile):
 
     def package(self):
         cmake = self.configure_cmake()
-        cmake.install()
-        self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
+        cmake.install(build_dir=os.path.join(self.build_folder, self._build_subfolder))
+        self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         if self.settings.compiler == 'Visual Studio':
             self.copy(pattern="*.pdb", dst="lib", src=".")
 
