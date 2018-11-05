@@ -14,10 +14,10 @@ class SDL2Conan(ConanFile):
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "LGPL-2.1"
     exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ["CMakeLists.txt", "cmake.patch"]
     generators = ['cmake']
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False],
                "fPIC": [True, False],
@@ -196,11 +196,8 @@ class SDL2Conan(ConanFile):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
         tools.get(source_url)
         extracted_dir = "SDL2-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
-        tools.replace_in_file(
-                os.path.join(self.source_subfolder, 'CMakeLists.txt'),
-                'install(FILES ${SDL2_BINARY_DIR}/libSDL2.${SOEXT} DESTINATION "lib${LIB_SUFFIX}")',
-                '')
+        os.rename(extracted_dir, self._source_subfolder)
+        tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
 
     def build(self):
         if self.settings.compiler == 'Visual Studio':
@@ -268,7 +265,7 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir=self.build_subfolder)
+        cmake.configure(build_dir=os.path.join(self.build_folder, self._build_subfolder))
         return cmake
 
     def build_cmake(self):
@@ -277,8 +274,8 @@ class SDL2Conan(ConanFile):
 
     def package(self):
         cmake = self.configure_cmake()
-        cmake.install()
-        self.copy(pattern="COPYING.txt", dst="license", src=self.source_subfolder)
+        cmake.install(build_dir=os.path.join(self.build_folder, self._build_subfolder))
+        self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         if self.settings.compiler == 'Visual Studio':
             self.copy(pattern="*.pdb", dst="lib", src=".")
 
@@ -301,7 +298,7 @@ class SDL2Conan(ConanFile):
         sdl2_config = os.path.join(self.package_folder, 'bin', sdl2_config)
         self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
