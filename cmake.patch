@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8f1e828..c6b1723 100644
+index 8f1e828d1..9c17f5f90 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -47,11 +47,7 @@ set(SDL_INTERFACE_AGE 0)
@@ -15,7 +15,23 @@ index 8f1e828..c6b1723 100644
  
  # Calculate a libtool-like version number
  math(EXPR LT_CURRENT "${SDL_MICRO_VERSION} - ${SDL_INTERFACE_AGE}")
-@@ -1697,9 +1693,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
+@@ -1626,7 +1622,14 @@ if(NOT WINDOWS OR CYGWIN)
+   endif()
+ 
+   # Clean up the different lists
+-  listtostr(EXTRA_LIBS _EXTRA_LIBS "-l")
++  foreach(_ITEM ${EXTRA_LIBS})
++    if("${_ITEM}" MATCHES "\\.framework$")
++      get_filename_component(_ITEM "${_ITEM}" NAME_WE)
++      set(_EXTRA_LIBS "-framework ${_ITEM} ${_EXTRA_LIBS}")
++    else()
++      set(_EXTRA_LIBS "-l${_ITEM} ${_EXTRA_LIBS}")
++    endif()
++  endforeach()
+   set(SDL_STATIC_LIBS ${SDL_LIBS} ${EXTRA_LDFLAGS} ${_EXTRA_LIBS})
+   list(REMOVE_DUPLICATES SDL_STATIC_LIBS)
+   listtostr(SDL_STATIC_LIBS _SDL_STATIC_LIBS)
+@@ -1697,9 +1700,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
  add_library(SDL2main STATIC ${SDLMAIN_SOURCES})
  target_include_directories(SDL2main PUBLIC $<INSTALL_INTERFACE:include>)
  set(_INSTALL_LIBS "SDL2main")
@@ -25,7 +41,7 @@ index 8f1e828..c6b1723 100644
  
  if(SDL_SHARED)
    add_library(SDL2 SHARED ${SOURCE_FILES} ${VERSION_SOURCES})
-@@ -1725,9 +1718,6 @@ if(SDL_SHARED)
+@@ -1725,9 +1725,6 @@ if(SDL_SHARED)
    set(_INSTALL_LIBS "SDL2" ${_INSTALL_LIBS})
    target_link_libraries(SDL2 ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
    target_include_directories(SDL2 PUBLIC $<INSTALL_INTERFACE:include>)
@@ -35,7 +51,7 @@ index 8f1e828..c6b1723 100644
  endif()
  
  if(SDL_STATIC)
-@@ -1751,9 +1741,6 @@ if(SDL_STATIC)
+@@ -1751,9 +1748,6 @@ if(SDL_STATIC)
    set(_INSTALL_LIBS "SDL2-static" ${_INSTALL_LIBS})
    target_link_libraries(SDL2-static ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
    target_include_directories(SDL2-static PUBLIC $<INSTALL_INTERFACE:include>)
@@ -45,7 +61,7 @@ index 8f1e828..c6b1723 100644
  endif()
  
  ##### Tests #####
-@@ -1815,11 +1802,11 @@ if(NOT (WINDOWS OR CYGWIN))
+@@ -1815,11 +1809,11 @@ if(NOT (WINDOWS OR CYGWIN))
      else()
          set(SOEXT "so")
      endif()
