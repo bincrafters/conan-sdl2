@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
+from conans.errors import ConanInvalidConfiguration
 import os
 
 
@@ -9,60 +10,65 @@ class SDL2Conan(ConanFile):
     name = "sdl2"
     version = "2.0.8"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
+    topics = ("conan", "sdl2", "audio", "keyboard", "graphics", "opengl")
     url = "https://github.com/bincrafters/conan-sdl2"
     homepage = "https://www.libsdl.org/"
     author = "Bincrafters <bincrafters@gmail.com>"
-    license = "LGPL-2.1"
+    license = "Zlib"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "cmake.patch"]
     generators = ['cmake']
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False],
-               "fPIC": [True, False],
-               "directx": [True, False],
-               "alsa": [True, False],
-               "jack": [True, False],
-               "pulse": [True, False],
-               "nas": [True, False],
-               "esd": [True, False],
-               "arts": [True, False],
-               "x11": [True, False],
-               "xcursor": [True, False],
-               "xinerama": [True, False],
-               "xinput": [True, False],
-               "xrandr": [True, False],
-               "xscrnsaver": [True, False],
-               "xshape": [True, False],
-               "xvm": [True, False],
-               "wayland": [True, False],
-               "mir": [True, False],
-               "directfb": [True, False],
-               "iconv": [True, False],
-               "sdl2main": [True, False]}
-    default_options = ("shared=False",
-                       "fPIC=True",
-                       "directx=True",
-                       "alsa=True",
-                       "jack=True",
-                       "pulse=True",
-                       "nas=True",
-                       "esd=False",
-                       "arts=False",
-                       "x11=True",
-                       "xcursor=True",
-                       "xinerama=True",
-                       "xinput=True",
-                       "xrandr=True",
-                       "xscrnsaver=True",
-                       "xshape=True",
-                       "xvm=True",
-                       "wayland=False",
-                       "mir=False",
-                       "directfb=False",
-                       "iconv=False",
-                       "sdl2main=True")
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False],
+        "directx": [True, False],
+        "alsa": [True, False],
+        "jack": [True, False],
+        "pulse": [True, False],
+        "nas": [True, False],
+        "esd": [True, False],
+        "arts": [True, False],
+        "x11": [True, False],
+        "xcursor": [True, False],
+        "xinerama": [True, False],
+        "xinput": [True, False],
+        "xrandr": [True, False],
+        "xscrnsaver": [True, False],
+        "xshape": [True, False],
+        "xvm": [True, False],
+        "wayland": [True, False],
+        "mir": [True, False],
+        "directfb": [True, False],
+        "iconv": [True, False],
+        "sdl2main": [True, False]
+    }
+    default_options = {
+        "shared": False,
+        "fPIC": True,
+        "directx": True,
+        "alsa": True,
+        "jack": True,
+        "pulse": True,
+        "nas": True,
+        "esd": False,
+        "arts": False,
+        "x11": True,
+        "xcursor": True,
+        "xinerama": True,
+        "xinput": True,
+        "xrandr": True,
+        "xscrnsaver": True,
+        "xshape": True,
+        "xvm": True,
+        "wayland": False,
+        "mir": False,
+        "directfb": False,
+        "iconv": False,
+        "sdl2main": True
+    }
 
     def requirements(self):
         if self.options.iconv:
@@ -210,7 +216,7 @@ class SDL2Conan(ConanFile):
         if option:
             pkg_config = tools.PkgConfig(package_name)
             if not pkg_config.provides:
-                raise Exception('package %s is not available' % package_name)
+                raise ConanInvalidConfiguration('package %s is not available' % package_name)
 
     def check_dependencies(self):
         if self.settings.os == 'Linux':
@@ -234,7 +240,7 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.mir, 'mirclient')
             self.check_pkg_config(self.options.directfb, 'directfb')
 
-    def configure_cmake(self):
+    def _configure_cmake(self):
         self.check_dependencies()
 
         cmake = CMake(self)
@@ -269,11 +275,11 @@ class SDL2Conan(ConanFile):
         return cmake
 
     def build_cmake(self):
-        cmake = self.configure_cmake()
+        cmake = self._configure_cmake()
         cmake.build()
 
     def package(self):
-        cmake = self.configure_cmake()
+        cmake = self._configure_cmake()
         cmake.install(build_dir=os.path.join(self.build_folder, self._build_subfolder))
         self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         if self.settings.compiler == 'Visual Studio':
