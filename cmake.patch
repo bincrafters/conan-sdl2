@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0128c7a..57574dd 100644
+index 0128c7a..fe589ca 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -50,11 +50,7 @@ set(SDL_VERSION "${SDL_MAJOR_VERSION}.${SDL_MINOR_VERSION}.${SDL_MICRO_VERSION}"
@@ -61,7 +61,7 @@ index 0128c7a..57574dd 100644
  endif()
  
  ##### Tests #####
-@@ -1848,22 +1842,18 @@ list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
+@@ -1848,11 +1842,7 @@ list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
  install(FILES ${INCLUDE_FILES} DESTINATION include/SDL2)
  
  string(TOUPPER "${CMAKE_BUILD_TYPE}" UPPER_BUILD_TYPE)
@@ -74,11 +74,7 @@ index 0128c7a..57574dd 100644
  
  if(NOT (WINDOWS OR CYGWIN))
    if(SDL_SHARED)
-     set(SOEXT ${CMAKE_SHARED_LIBRARY_SUFFIX}) # ".so", ".dylib", etc.
-     get_target_property(SONAME SDL2 OUTPUT_NAME)
--    if(NOT ANDROID)
-+    if(NOT (ANDROID OR APPLE))
-         install(CODE "
+@@ -1863,7 +1853,7 @@ if(NOT (WINDOWS OR CYGWIN))
            execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
              \"lib${SONAME}${SOPOSTFIX}${SOEXT}\" \"libSDL2${SOPOSTFIX}${SOEXT}\")"
              WORKING_DIR "${SDL2_BINARY_DIR}")
