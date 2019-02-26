@@ -206,6 +206,13 @@ class SDL2Conan(ConanFile):
         tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
 
     def build(self):
+        # ensure sdl2-config is created for MinGW
+        tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
+                              "if(NOT WINDOWS OR CYGWIN)",
+                              "if(NOT WINDOWS OR CYGWIN OR MINGW)")
+        tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
+                              "if(NOT (WINDOWS OR CYGWIN))",
+                              "if(NOT WINDOWS OR CYGWIN OR MINGW)")
         if self.settings.compiler == 'Visual Studio':
             with tools.vcvars(self.settings, filter_known_paths=False):
                 self.build_cmake()
@@ -300,9 +307,14 @@ class SDL2Conan(ConanFile):
     def package_id(self):
         del self.info.options.sdl2main
 
+    @staticmethod
+    def _chmod_plus_x(filename):
+        if os.name == 'posix':
+            os.chmod(filename, os.stat(filename).st_mode | 0o111)
+
     def package_info(self):
-        sdl2_config = 'sdl2-config.exe' if self.settings.os == 'Windows' else 'sdl2-config'
-        sdl2_config = os.path.join(self.package_folder, 'bin', sdl2_config)
+        sdl2_config = os.path.join(self.package_folder, 'bin', "sdl2-config")
+        self._chmod_plus_x(sdl2_config)
         self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
         self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
