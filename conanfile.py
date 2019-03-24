@@ -82,6 +82,10 @@ class SDL2Conan(ConanFile):
                     arch_suffix = ':i386'
                 elif self.settings.arch == "x86_64":
                     arch_suffix = ':amd64'
+                elif self.settings.arch == "armv7":
+                    arch_suffix = ':armhf'
+                elif self.settings.arch == "armv8":
+                    arch_suffix = ':arm64'
                 packages = ['pkg-config%s' % arch_suffix]
                 packages.append('mesa-common-dev%s' % arch_suffix)
                 packages.append('libegl1-mesa-dev%s' % arch_suffix)
