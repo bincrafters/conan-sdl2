@@ -43,6 +43,7 @@ class SDL2Conan(ConanFile):
         "mir": [True, False],
         "directfb": [True, False],
         "iconv": [True, False],
+        "video_rpi": [True, False],
         "sdl2main": [True, False]
     }
     default_options = {
@@ -67,6 +68,7 @@ class SDL2Conan(ConanFile):
         "mir": False,
         "directfb": False,
         "iconv": False,
+        "video_rpi": False,
         "sdl2main": True
     }
 
@@ -194,6 +196,7 @@ class SDL2Conan(ConanFile):
             self.options.remove('mir')
             self.options.remove('wayland')
             self.options.remove('directfb')
+            self.options.remove('video_rpi')
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
@@ -280,6 +283,7 @@ class SDL2Conan(ConanFile):
             cmake.definitions['VIDEO_MIR'] = self.options.mir
             cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
             cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
+            cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
@@ -341,6 +345,14 @@ class SDL2Conan(ConanFile):
                 self.add_libraries_from_pc('esound')
             if self.options.directfb:
                 self.add_libraries_from_pc('directfb')
+            if self.options.video_rpi:
+                self.cpp_info.libs.append('bcm_host')
+                self.cpp_info.includedirs.extend(["/opt/vc/include",
+                                                  "/opt/vc/include/interface/vcos/pthreads",
+                                                  "/opt/vc/include/interface/vmcs_host/linux"])
+                self.cpp_info.libdirs.append("/opt/vc/lib")
+                self.cpp_info.sharedlinkflags.append("-Wl,-rpath,/opt/vc/lib")
+                self.cpp_info.exelinkflags.append("-Wl,-rpath,/opt/vc/lib")
         elif self.settings.os == "Macos":
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
