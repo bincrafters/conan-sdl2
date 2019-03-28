@@ -321,6 +321,8 @@ class SDL2Conan(ConanFile):
         self._chmod_plus_x(sdl2_config)
         self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
+        self.output.info('Creating SDL_CONFIG environment variable: %s' % sdl2_config)
+        self.env_info.SDL_CONFIG = sdl2_config
         self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
