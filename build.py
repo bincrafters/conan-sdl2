@@ -9,7 +9,7 @@ def add_build_requires(builds):
     return map(add_required_installers, builds)
 
 def add_required_installers(build):
-    installers = ['ninja_installer/1.8.2@bincrafters/stable']
+    installers = ['ninja_installer/1.9.0@bincrafters/stable']
     build.build_requires.update({"*" : installers})
     return build
 
