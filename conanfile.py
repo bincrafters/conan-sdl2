@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, CMake, tools
 from conans.errors import ConanInvalidConfiguration
 import os
@@ -8,7 +5,7 @@ import os
 
 class SDL2Conan(ConanFile):
     name = "sdl2"
-    version = "2.0.9"
+    version = "2.0.10"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     topics = ("conan", "sdl2", "audio", "keyboard", "graphics", "opengl")
     url = "https://github.com/bincrafters/conan-sdl2"
@@ -40,7 +37,6 @@ class SDL2Conan(ConanFile):
         "xshape": [True, False],
         "xvm": [True, False],
         "wayland": [True, False],
-        "mir": [True, False],
         "directfb": [True, False],
         "iconv": [True, False],
         "video_rpi": [True, False],
@@ -64,8 +60,7 @@ class SDL2Conan(ConanFile):
         "xscrnsaver": True,
         "xshape": True,
         "xvm": True,
-        "wayland": False,
-        "mir": False,
+        "wayland": True,
         "directfb": False,
         "iconv": False,
         "video_rpi": False,
@@ -124,9 +119,6 @@ class SDL2Conan(ConanFile):
                     packages.extend(['libwayland-dev%s' % arch_suffix,
                                      'libxkbcommon-dev%s' % arch_suffix,
                                      'wayland-protocols'])
-                if self.options.mir:
-                    packages.extend(['libmirclient-dev%s' % arch_suffix,
-                                     'libxkbcommon-dev%s' % arch_suffix])
                 if self.options.directfb:
                     packages.append('libdirectfb-dev%s' % arch_suffix)
                 for package in packages:
@@ -193,7 +185,6 @@ class SDL2Conan(ConanFile):
             self.options.remove("xscrnsaver")
             self.options.remove("xshape")
             self.options.remove("xvm")
-            self.options.remove('mir')
             self.options.remove('wayland')
             self.options.remove('directfb')
             self.options.remove('video_rpi')
@@ -207,7 +198,7 @@ class SDL2Conan(ConanFile):
 
     def source(self):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
-        tools.get(source_url, sha256="255186dc676ecd0c1dbf10ec8a2cc5d6869b5079d8a38194c2aecdff54b324b1")
+        tools.get(source_url, sha256="b4656c13a1f0d0023ae2f4a9cf08ec92fffb464e0f24238337784159b8b91d57")
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
@@ -247,7 +238,6 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.wayland, 'wayland-client')
             self.check_pkg_config(self.options.wayland, 'xkbcommon')
             self.check_pkg_config(self.options.wayland, 'wayland-protocols')
-            self.check_pkg_config(self.options.mir, 'mirclient')
             self.check_pkg_config(self.options.directfb, 'directfb')
 
     def _configure_cmake(self):
@@ -276,7 +266,6 @@ class SDL2Conan(ConanFile):
             cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
             cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
             cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
-            cmake.definitions['VIDEO_MIR'] = self.options.mir
             cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
             cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
             cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
