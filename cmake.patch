@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0128c7a..fe589ca 100644
+index bd59d89b2..1fb6b226a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -50,11 +50,7 @@ set(SDL_VERSION "${SDL_MAJOR_VERSION}.${SDL_MINOR_VERSION}.${SDL_MICRO_VERSION}"
@@ -15,7 +15,7 @@ index 0128c7a..fe589ca 100644
  
  # Calculate a libtool-like version number
  math(EXPR LT_CURRENT "${SDL_MICRO_VERSION} - ${SDL_INTERFACE_AGE}")
-@@ -1663,7 +1659,14 @@ if(NOT WINDOWS OR CYGWIN)
+@@ -1720,7 +1716,14 @@ if(NOT WINDOWS OR CYGWIN)
    endif()
  
    # Clean up the different lists
@@ -31,7 +31,7 @@ index 0128c7a..fe589ca 100644
    set(SDL_STATIC_LIBS ${SDL_LIBS} ${EXTRA_LDFLAGS} ${_EXTRA_LIBS})
    list(REMOVE_DUPLICATES SDL_STATIC_LIBS)
    listtostr(SDL_STATIC_LIBS _SDL_STATIC_LIBS)
-@@ -1734,9 +1737,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
+@@ -1791,9 +1794,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
  add_library(SDL2main STATIC ${SDLMAIN_SOURCES})
  target_include_directories(SDL2main PUBLIC "$<BUILD_INTERFACE:${SDL2_SOURCE_DIR}/include>" $<INSTALL_INTERFACE:include/SDL2>)
  set(_INSTALL_LIBS "SDL2main")
@@ -41,7 +41,7 @@ index 0128c7a..fe589ca 100644
  
  if(SDL_SHARED)
    add_library(SDL2 SHARED ${SOURCE_FILES} ${VERSION_SOURCES})
-@@ -1764,9 +1764,6 @@ if(SDL_SHARED)
+@@ -1821,9 +1821,6 @@ if(SDL_SHARED)
    set(_INSTALL_LIBS "SDL2" ${_INSTALL_LIBS})
    target_link_libraries(SDL2 ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
    target_include_directories(SDL2 PUBLIC "$<BUILD_INTERFACE:${SDL2_SOURCE_DIR}/include>" $<INSTALL_INTERFACE:include/SDL2>)
@@ -50,8 +50,8 @@ index 0128c7a..fe589ca 100644
 -  endif()
  endif()
  
- if(SDL_STATIC)
-@@ -1790,9 +1787,6 @@ if(SDL_STATIC)
+ if(ANDROID)
+@@ -1861,9 +1858,6 @@ if(SDL_STATIC)
    set(_INSTALL_LIBS "SDL2-static" ${_INSTALL_LIBS})
    target_link_libraries(SDL2-static ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
    target_include_directories(SDL2-static PUBLIC "$<BUILD_INTERFACE:${SDL2_SOURCE_DIR}/include>" $<INSTALL_INTERFACE:include/SDL2>)
@@ -61,7 +61,7 @@ index 0128c7a..fe589ca 100644
  endif()
  
  ##### Tests #####
-@@ -1848,11 +1842,7 @@ list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
+@@ -1917,11 +1911,7 @@ list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
  install(FILES ${INCLUDE_FILES} DESTINATION include/SDL2)
  
  string(TOUPPER "${CMAKE_BUILD_TYPE}" UPPER_BUILD_TYPE)
@@ -74,10 +74,10 @@ index 0128c7a..fe589ca 100644
  
  if(NOT (WINDOWS OR CYGWIN))
    if(SDL_SHARED)
-@@ -1863,7 +1853,7 @@ if(NOT (WINDOWS OR CYGWIN))
+@@ -1932,7 +1922,7 @@ if(NOT (WINDOWS OR CYGWIN))
            execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-             \"lib${SONAME}${SOPOSTFIX}${SOEXT}\" \"libSDL2${SOPOSTFIX}${SOEXT}\")"
-             WORKING_DIR "${SDL2_BINARY_DIR}")
+             \"lib${SONAME}${SOPOSTFIX}${SOEXT}\" \"libSDL2${SOPOSTFIX}${SOEXT}\"
+             WORKING_DIRECTORY \"${SDL2_BINARY_DIR}\")")
 -        install(FILES ${SDL2_BINARY_DIR}/libSDL2${SOPOSTFIX}${SOEXT} DESTINATION "lib${LIB_SUFFIX}")
 +        install(FILES ${CMAKE_BINARY_DIR}/libSDL2${SOPOSTFIX}${SOEXT} DESTINATION "lib${LIB_SUFFIX}")
      endif()
