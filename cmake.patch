@@ -77,9 +77,10 @@ index bd59d89b2..1fb6b226a 100644
 @@ -1932,7 +1922,7 @@ if(NOT (WINDOWS OR CYGWIN))
            execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
              \"lib${SONAME}${SOPOSTFIX}${SOEXT}\" \"libSDL2${SOPOSTFIX}${SOEXT}\"
-             WORKING_DIRECTORY \"${SDL2_BINARY_DIR}\")")
+-            WORKING_DIRECTORY \"${SDL2_BINARY_DIR}\")")
 -        install(FILES ${SDL2_BINARY_DIR}/libSDL2${SOPOSTFIX}${SOEXT} DESTINATION "lib${LIB_SUFFIX}")
-+        install(FILES ${CMAKE_BINARY_DIR}/libSDL2${SOPOSTFIX}${SOEXT} DESTINATION "lib${LIB_SUFFIX}")
++            WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}\")")
++        install(FILES ${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}/libSDL2${SOPOSTFIX}${SOEXT} DESTINATION "lib${LIB_SUFFIX}")
      endif()
    endif()
    if(FREEBSD)
