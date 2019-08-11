@@ -13,7 +13,7 @@ class SDL2Conan(ConanFile):
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "Zlib"
     exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt", "cmake.patch"]
+    exports_sources = ["CMakeLists.txt", "cmake.patch", "SDL_string.patch"]
     generators = ['cmake']
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
@@ -202,6 +202,9 @@ class SDL2Conan(ConanFile):
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         tools.patch(base_path=self._source_subfolder, patch_file="cmake.patch")
+        # Workaround for linker error with VS2019, see https://bugzilla.libsdl.org/show_bug.cgi?id=4759
+        if self.settings.compiler == 'Visual Studio' and self.settings.compiler.version == 16:
+            tools.patch(base_path=self._source_subfolder, patch_file="SDL_string.patch")
 
     def build(self):
         # ensure sdl2-config is created for MinGW
