@@ -193,6 +193,7 @@ class SDL2Conan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
         if self.settings.compiler == 'Visual Studio':
             del self.options.fPIC
 
