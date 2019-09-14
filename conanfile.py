@@ -345,7 +345,8 @@ class SDL2Conan(ConanFile):
         elif self.settings.os == "Macos":
             frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
             for framework in frameworks:
-                self.cpp_info.exelinkflags.append("-framework %s" % framework)
+                self.cpp_info.exelinkflags.append("-framework")
+                self.cpp_info.exelinkflags.append(framework)
             if not self.options.iconv:
                 self.cpp_info.libs.append('iconv')
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
