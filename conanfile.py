@@ -343,10 +343,7 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.sharedlinkflags.append("-Wl,-rpath,/opt/vc/lib")
                 self.cpp_info.exelinkflags.append("-Wl,-rpath,/opt/vc/lib")
         elif self.settings.os == "Macos":
-            frameworks = ['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback']
-            for framework in frameworks:
-                self.cpp_info.exelinkflags.append("-framework")
-                self.cpp_info.exelinkflags.append(framework)
+            self.cpp_info.frameworks.extend(['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback'])
             if not self.options.iconv:
                 self.cpp_info.libs.append('iconv')
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
