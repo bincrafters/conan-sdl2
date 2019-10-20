@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.12)
 project(cmake_wrapper)
 
 include(${CONAN_INSTALL_FOLDER}/conanbuildinfo.cmake)

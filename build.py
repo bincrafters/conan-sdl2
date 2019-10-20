@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import os
 from conans import tools
@@ -9,7 +8,7 @@ def add_build_requires(builds):
     return map(add_required_installers, builds)
 
 def add_required_installers(build):
-    installers = ['ninja_installer/1.9.0@bincrafters/stable']
+    installers = ['ninja/1.9.0']
     build.build_requires.update({"*" : installers})
     return build
 
