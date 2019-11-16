@@ -10,7 +10,6 @@ class SDL2Conan(ConanFile):
     topics = ("conan", "sdl2", "audio", "keyboard", "graphics", "opengl")
     url = "https://github.com/bincrafters/conan-sdl2"
     homepage = "https://www.libsdl.org"
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "Zlib"
     exports = ["LICENSE.md"]
     exports_sources = ["CMakeLists.txt", "cmake.patch", "SDL_string.patch"]
