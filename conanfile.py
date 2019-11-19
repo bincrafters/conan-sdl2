@@ -214,7 +214,7 @@ class SDL2Conan(ConanFile):
         tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
                               "if(NOT (WINDOWS OR CYGWIN))",
                               "if(NOT WINDOWS OR CYGWIN OR MINGW)")
-        self.build_cmake()
+        self._build_cmake()
 
     def check_pkg_config(self, option, package_name):
         if option:
@@ -222,7 +222,7 @@ class SDL2Conan(ConanFile):
             if not pkg_config.provides:
                 raise ConanInvalidConfiguration('package %s is not available' % package_name)
 
-    def check_dependencies(self):
+    def _check_dependencies(self):
         if self.settings.os == 'Linux':
             self.check_pkg_config(True, 'egl')
             self.check_pkg_config(True, 'libdrm')
@@ -244,7 +244,7 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.directfb, 'directfb')
 
     def _configure_cmake(self):
-        self.check_dependencies()
+        self._check_dependencies()
 
         cmake = CMake(self)
         # FIXME: self.install_folder not defined? Neccessary?
@@ -278,7 +278,7 @@ class SDL2Conan(ConanFile):
         cmake.configure(build_dir=self._build_subfolder)
         return cmake
 
-    def build_cmake(self):
+    def _build_cmake(self):
         cmake = self._configure_cmake()
         cmake.build()
 
@@ -289,7 +289,7 @@ class SDL2Conan(ConanFile):
         if self.settings.compiler == 'Visual Studio':
             self.copy(pattern="*.pdb", dst="lib", src=".")
 
-    def add_libraries_from_pc(self, library, static=None):
+    def _add_libraries_from_pc(self, library, static=None):
         if static is None:
             static = not self.options.shared
         pkg_config = tools.PkgConfig(library, static=static)
@@ -322,17 +322,17 @@ class SDL2Conan(ConanFile):
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
             if self.options.alsa:
-                self.add_libraries_from_pc('alsa')
+                self._add_libraries_from_pc('alsa')
             if self.options.jack:
-                self.add_libraries_from_pc('jack')
+                self._add_libraries_from_pc('jack')
             if self.options.pulse:
-                self.add_libraries_from_pc('libpulse', False)
+                self._add_libraries_from_pc('libpulse', False)
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
-                self.add_libraries_from_pc('esound')
+                self._add_libraries_from_pc('esound')
             if self.options.directfb:
-                self.add_libraries_from_pc('directfb')
+                self._add_libraries_from_pc('directfb')
             if self.options.video_rpi:
                 self.cpp_info.libs.append('bcm_host')
                 self.cpp_info.includedirs.extend(["/opt/vc/include",
