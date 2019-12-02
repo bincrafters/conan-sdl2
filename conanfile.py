@@ -91,65 +91,68 @@ class SDL2Conan(ConanFile):
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
-            if tools.os_info.with_apt:
+            if tools.os_info.with_apt or tools.os_info.with_yum:
                 installer = tools.SystemPackageTool()
-                if self.settings.arch == "x86":
-                    arch_suffix = ':i386'
-                elif self.settings.arch == "x86_64":
-                    arch_suffix = ':amd64'
-                elif self.settings.arch == "armv7":
-                    arch_suffix = ':armhf'
-                elif self.settings.arch == "armv8":
-                    arch_suffix = ':arm64'
+
                 packages = []
-                packages.append('mesa-common-dev%s' % arch_suffix)
-                packages.append('libegl1-mesa-dev%s' % arch_suffix)
-                packages.append('libgbm-dev%s' % arch_suffix)
+                packages_apt = []
+                packages_yum = []
+                packages_apt.append('mesa-common-dev')
+                packages_yum.append('mesa-libGL-devel')
+
+                packages_apt.append('libegl1-mesa-dev')
+                packages_yum.append('mesa-libEGL-devel')
+
+                packages_apt.append('libgbm-dev')
+                packages_yum.append('gdm-devel')
+
                 if self.options.alsa:
-                    packages.append('libasound2-dev%s' % arch_suffix)
+                    packages_apt.append('libasound2-dev')
+                    packages_yum.append('alsa-lib-devel')
                 if self.options.jack:
-                    packages.append('libjack-dev%s' % arch_suffix)
+                    packages_apt.append('libjack-dev')
+                    packages_yum.append('jack-audio-connection-kit-devel')
                 if self.options.pulse:
-                    packages.append('libpulse-dev%s' % arch_suffix)
+                    packages_apt.append('libpulse-dev')
+                    packages_yum.append('pulseaudio-libs-devel')
                 if self.options.nas:
-                    packages.append('libaudio-dev%s' % arch_suffix)
+                    packages_apt.append('libaudio-dev')
+                    packages_yum.append('nas-devel')
                 if self.options.esd:
-                    packages.append('libesd0-dev%s' % arch_suffix)
+                    packages_apt.append('libesd0-dev')
+                    packages_yum.append('esound-devel')
                 if self.options.arts:
-                    packages.append('artsc0-dev%s' % arch_suffix)
+                    packages_apt.append('artsc0-dev')
                 if self.options.wayland:
-                    packages.extend(['libwayland-dev%s' % arch_suffix,
-                                     'libxkbcommon-dev%s' % arch_suffix,
+                    packages_apt.extend(['libwayland-dev',
+                                     'libxkbcommon-dev',
                                      'wayland-protocols'])
-                if self.options.directfb:
-                    packages.append('libdirectfb-dev%s' % arch_suffix)
-                for package in packages:
-                    installer.install(package)
-            if tools.os_info.with_yum:
-                installer = tools.SystemPackageTool()
-                if self.settings.arch == "x86":
-                    arch_suffix = '.i686'
-                elif self.settings.arch == 'x86_64':
-                    arch_suffix = '.x86_64'
-                packages = ['mesa-libGL-devel%s' % arch_suffix,
-                            'mesa-libEGL-devel%s' % arch_suffix,
-                            'gdm-devel%s' % arch_suffix,]
-                if self.options.alsa:
-                    packages.append('alsa-lib-devel%s' % arch_suffix)
-                if self.options.jack:
-                    packages.append('jack-audio-connection-kit-devel%s' % arch_suffix)
-                if self.options.pulse:
-                    packages.append('pulseaudio-libs-devel%s' % arch_suffix)
-                if self.options.nas:
-                    packages.append('nas-devel%s' % arch_suffix)
-                if self.options.esd:
-                    packages.append('esound-devel%s' % arch_suffix)
-                if self.options.wayland:
-                    packages.extend(['wayland-devel%s' % arch_suffix,
-                                    'libxkbcommon-devel%s' % arch_suffix,
+                    packages_yum.extend(['wayland-devel',
+                                    'libxkbcommon-devel'
                                     'wayland-protocols-devel'])
+                if self.options.directfb:
+                    packages_apt.append('libdirectfb-dev')
+
+                if tools.os_info.with_apt:
+                    packages = packages_apt
+                    if self.settings.arch == "x86":
+                        arch_suffix = ':i386'
+                    elif self.settings.arch == "x86_64":
+                        arch_suffix = ':amd64'
+                    elif self.settings.arch == "armv7":
+                        arch_suffix = ':armhf'
+                    elif self.settings.arch == "armv8":
+                        arch_suffix = ':arm64'
+
+                if tools.os_info.with_yum:
+                    packages = packages_yum
+                    if self.settings.arch == "x86":
+                        arch_suffix = '.i686'
+                    elif self.settings.arch == 'x86_64':
+                        arch_suffix = '.x86_64'
+
                 for package in packages:
-                    installer.install(package)
+                    installer.install("{}{}".format(package, arch_suffix))
 
     def config_options(self):
         if self.settings.os != "Linux":
