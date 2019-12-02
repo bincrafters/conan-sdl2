@@ -68,8 +68,27 @@ class SDL2Conan(ConanFile):
     def requirements(self):
         if self.options.iconv:
             self.requires.add("libiconv/1.15")
-        if self.settings.os == "Linux":
+
+        if self.settings.os == "Linux" and tools.os_info.is_linux:
             self.requires.add("libdrm/2.4.100@bincrafters/stable")
+            if not tools.which('pkg-config'):
+                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
+            if self.options.x11:
+                self.requires.add("libx11/1.6.8@bincrafters/stable")
+                self.requires.add("libxext/1.3.4@bincrafters/stable")
+            if self.options.xcursor:
+                self.requires.add("libXcursor/1.2.0@bincrafters/stable")
+            if self.options.xinerama:
+                self.requires.add("libxinerama/1.1.4@bincrafters/stable")
+            if self.options.xinput:
+                self.requires.add("libxi/1.7.10@bincrafters/stable")
+            if self.options.xrandr:
+                self.requires.add("libxrandr/1.5.2@bincrafters/stable")
+            if self.options.xscrnsaver:
+                self.requires.add("libxscrnsaver/1.2.3@bincrafters/stable")
+            if self.options.xvm:
+                self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
+
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -83,7 +102,7 @@ class SDL2Conan(ConanFile):
                     arch_suffix = ':armhf'
                 elif self.settings.arch == "armv8":
                     arch_suffix = ':arm64'
-                packages = ['pkg-config%s' % arch_suffix]
+                packages = []
                 packages.append('mesa-common-dev%s' % arch_suffix)
                 packages.append('libegl1-mesa-dev%s' % arch_suffix)
                 packages.append('libgbm-dev%s' % arch_suffix)
@@ -99,21 +118,6 @@ class SDL2Conan(ConanFile):
                     packages.append('libesd0-dev%s' % arch_suffix)
                 if self.options.arts:
                     packages.append('artsc0-dev%s' % arch_suffix)
-                if self.options.x11:
-                    packages.extend(['libx11-dev%s' % arch_suffix,
-                                     'libxext-dev%s' % arch_suffix])
-                if self.options.xcursor:
-                    packages.append('libxcursor-dev%s' % arch_suffix)
-                if self.options.xinerama:
-                    packages.append('libxinerama-dev%s' % arch_suffix)
-                if self.options.xinput:
-                    packages.append('libxi-dev%s' % arch_suffix)
-                if self.options.xrandr:
-                    packages.append('libxrandr-dev%s' % arch_suffix)
-                if self.options.xscrnsaver:
-                    packages.append('libxss-dev%s' % arch_suffix)
-                if self.options.xvm:
-                    packages.append('libxxf86vm-dev%s' % arch_suffix)
                 if self.options.wayland:
                     packages.extend(['libwayland-dev%s' % arch_suffix,
                                      'libxkbcommon-dev%s' % arch_suffix,
@@ -131,10 +135,6 @@ class SDL2Conan(ConanFile):
                 packages = ['mesa-libGL-devel%s' % arch_suffix,
                             'mesa-libEGL-devel%s' % arch_suffix,
                             'gdm-devel%s' % arch_suffix,]
-                if tools.os_info.linux_distro == 'centos':
-                    packages.append('pkgconfig%s' % arch_suffix)
-                elif tools.os_info.linux_distro == 'fedora':
-                    packages.append('pkgconf-pkg-config%s' % arch_suffix)
                 if self.options.alsa:
                     packages.append('alsa-lib-devel%s' % arch_suffix)
                 if self.options.jack:
@@ -145,21 +145,6 @@ class SDL2Conan(ConanFile):
                     packages.append('nas-devel%s' % arch_suffix)
                 if self.options.esd:
                     packages.append('esound-devel%s' % arch_suffix)
-                if self.options.x11:
-                    packages.extend(['libX11-devel%s' % arch_suffix,
-                                    'libXext-devel%s' % arch_suffix])
-                if self.options.xcursor:
-                    packages.append('libXcursor-devel%s' % arch_suffix)
-                if self.options.xinerama:
-                    packages.append('libXinerama-devel%s' % arch_suffix)
-                if self.options.xinput:
-                    packages.append('libXi-devel%s' % arch_suffix)
-                if self.options.xrandr:
-                    packages.append('libXrandr-devel%s' % arch_suffix)
-                if self.options.xscrnsaver:
-                    packages.append('libXScrnSaver-devel%s' % arch_suffix)
-                if self.options.xvm:
-                    packages.append('libXxf86vm-devel%s' % arch_suffix)
                 if self.options.wayland:
                     packages.extend(['wayland-devel%s' % arch_suffix,
                                     'libxkbcommon-devel%s' % arch_suffix,
