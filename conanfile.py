@@ -69,6 +69,8 @@ class SDL2Conan(ConanFile):
     def requirements(self):
         if self.options.iconv:
             self.requires.add("libiconv/1.15")
+        if self.settings.os == "Linux":
+            self.requires.add("libdrm/2.4.100@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -129,8 +131,7 @@ class SDL2Conan(ConanFile):
                     arch_suffix = '.x86_64'
                 packages = ['mesa-libGL-devel%s' % arch_suffix,
                             'mesa-libEGL-devel%s' % arch_suffix,
-                            'gdm-devel%s' % arch_suffix,
-                            'libdrm-devel%s' % arch_suffix]
+                            'gdm-devel%s' % arch_suffix,]
                 if tools.os_info.linux_distro == 'centos':
                     packages.append('pkgconfig%s' % arch_suffix)
                 elif tools.os_info.linux_distro == 'fedora':
