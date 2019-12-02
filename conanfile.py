@@ -89,7 +89,6 @@ class SDL2Conan(ConanFile):
             if self.options.xvm:
                 self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
 
-
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             if tools.os_info.with_apt:
@@ -214,14 +213,6 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.jack, 'jack')
             self.check_pkg_config(self.options.pulse, 'libpulse')
             self.check_pkg_config(self.options.esd, 'esound')
-            self.check_pkg_config(self.options.x11, 'x11')
-            self.check_pkg_config(self.options.x11, 'xext')
-            self.check_pkg_config(self.options.xcursor, 'xcursor')
-            self.check_pkg_config(self.options.xinerama, 'xinerama')
-            self.check_pkg_config(self.options.xinput, 'xi')
-            self.check_pkg_config(self.options.xrandr, 'xrandr')
-            self.check_pkg_config(self.options.xscrnsaver, 'xscrnsaver')
-            self.check_pkg_config(self.options.xvm, 'xxf86vm')
             self.check_pkg_config(self.options.wayland, 'wayland-client')
             self.check_pkg_config(self.options.wayland, 'xkbcommon')
             self.check_pkg_config(self.options.wayland, 'wayland-protocols')
