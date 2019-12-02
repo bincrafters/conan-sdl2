@@ -77,7 +77,7 @@ class SDL2Conan(ConanFile):
                 self.requires.add("libx11/1.6.8@bincrafters/stable")
                 self.requires.add("libxext/1.3.4@bincrafters/stable")
             if self.options.xcursor:
-                self.requires.add("libXcursor/1.2.0@bincrafters/stable")
+                self.requires.add("libxcursor/1.2.0@bincrafters/stable")
             if self.options.xinerama:
                 self.requires.add("libxinerama/1.1.4@bincrafters/stable")
             if self.options.xinput:
