@@ -4,13 +4,6 @@ import os
 from conans import tools
 from bincrafters import build_template_default
 
-def add_build_requires(builds):
-    return map(add_required_installers, builds)
-
-def add_required_installers(build):
-    installers = ['ninja/1.9.0']
-    build.build_requires.update({"*" : installers})
-    return build
 
 if __name__ == "__main__":
 
@@ -21,7 +14,5 @@ if __name__ == "__main__":
             custom_options = {"sdl2:esd": False, "sdl2:wayland": True, "sdl2:x11": True, 'sdl2:shared': shared_option}
             builder.add({'arch': 'x86_64', 'build_type': 'Release', 'compiler': 'gcc', 'compiler.version': 8}, custom_options)
             builder.add({'arch': 'x86_64', 'build_type': 'Debug', 'compiler': 'gcc', 'compiler.version': 8}, custom_options)
-
-    builder.items = add_build_requires(builder.items)
 
     builder.run()
