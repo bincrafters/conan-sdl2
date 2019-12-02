@@ -11,7 +11,7 @@ class SDL2Conan(ConanFile):
     url = "https://github.com/bincrafters/conan-sdl2"
     homepage = "https://www.libsdl.org"
     license = "Zlib"
-    exports_sources = ["CMakeLists.txt", "cmake.patch", "SDL_string.patch"]
+    exports_sources = ["CMakeLists.txt", "patches/*"]
     generators = ['cmake']
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
