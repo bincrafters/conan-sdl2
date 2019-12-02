@@ -261,11 +261,9 @@ class SDL2Conan(ConanFile):
         cmake.build()
 
     def package(self):
+        self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         cmake = self._configure_cmake()
         cmake.install(build_dir=self._build_subfolder)
-        self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
-        if self.settings.compiler == 'Visual Studio':
-            self.copy(pattern="*.pdb", dst="lib", src=".")
 
     def _add_libraries_from_pc(self, library, static=None):
         if static is None:
