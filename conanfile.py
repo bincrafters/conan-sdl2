@@ -12,7 +12,7 @@ class SDL2Conan(ConanFile):
     homepage = "https://www.libsdl.org"
     license = "Zlib"
     exports_sources = ["CMakeLists.txt", "patches/*"]
-    generators = ['cmake']
+    generators = ["cmake", "pkg_config"]
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
