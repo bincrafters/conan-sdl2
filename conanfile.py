@@ -133,26 +133,8 @@ class SDL2Conan(ConanFile):
                 if self.options.directfb:
                     packages_apt.append('libdirectfb-dev')
 
-                if tools.os_info.with_apt:
-                    packages = packages_apt
-                    if self.settings.arch == "x86":
-                        arch_suffix = ':i386'
-                    elif self.settings.arch == "x86_64":
-                        arch_suffix = ':amd64'
-                    elif self.settings.arch == "armv7":
-                        arch_suffix = ':armhf'
-                    elif self.settings.arch == "armv8":
-                        arch_suffix = ':arm64'
-
-                if tools.os_info.with_yum:
-                    packages = packages_yum
-                    if self.settings.arch == "x86":
-                        arch_suffix = '.i686'
-                    elif self.settings.arch == 'x86_64':
-                        arch_suffix = '.x86_64'
-
                 for package in packages:
-                    installer.install("{}{}".format(package, arch_suffix))
+                    installer.install(package)
 
     def config_options(self):
         if self.settings.os != "Linux":
