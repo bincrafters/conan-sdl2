@@ -295,7 +295,7 @@ class SDL2Conan(ConanFile):
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
-            self.cpp_info.libs.extend(['dl', 'rt', 'pthread'])
+            self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
             if self.options.alsa:
                 self._add_libraries_from_pc('alsa')
             if self.options.jack:
@@ -322,4 +322,4 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.libs.append('iconv')
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
         elif self.settings.os == "Windows":
-            self.cpp_info.libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'setupapi', 'shell32'])
+            self.cpp_info.system_libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'setupapi', 'shell32'])
