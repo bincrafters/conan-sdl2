@@ -217,7 +217,6 @@ class SDL2Conan(ConanFile):
             self.check_pkg_config(self.options.pulse, 'libpulse')
             self.check_pkg_config(self.options.esd, 'esound')
             self.check_pkg_config(self.options.wayland, 'wayland-client')
-            self.check_pkg_config(self.options.wayland, 'xkbcommon')
             self.check_pkg_config(self.options.wayland, 'wayland-protocols')
             self.check_pkg_config(self.options.directfb, 'directfb')
 
