@@ -133,6 +133,11 @@ class SDL2Conan(ConanFile):
                 if self.options.directfb:
                     packages_apt.append('libdirectfb-dev')
 
+                if tools.os_info.with_apt:
+                    packages = packages_apt
+                elif tools.os_info.with_yum:
+                    packages = packages_yum
+
                 for package in packages:
                     installer.install(package)
 
