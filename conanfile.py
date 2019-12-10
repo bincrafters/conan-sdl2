@@ -72,7 +72,7 @@ class SDL2Conan(ConanFile):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             self.requires.add("libdrm/2.4.100@bincrafters/stable")
             if not tools.which('pkg-config'):
-                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
+                self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
             if self.options.x11:
                 self.requires.add("libx11/1.6.8@bincrafters/stable")
                 self.requires.add("libxext/1.3.4@bincrafters/stable")
