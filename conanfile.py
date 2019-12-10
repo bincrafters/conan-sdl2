@@ -202,7 +202,7 @@ class SDL2Conan(ConanFile):
                               "if(NOT WINDOWS OR CYGWIN OR MINGW)")
         self._build_cmake()
 
-    def check_pkg_config(self, option, package_name):
+    def _check_pkg_config(self, option, package_name):
         if option:
             pkg_config = tools.PkgConfig(package_name)
             if not pkg_config.provides:
@@ -210,15 +210,15 @@ class SDL2Conan(ConanFile):
 
     def _check_dependencies(self):
         if self.settings.os == 'Linux':
-            self.check_pkg_config(True, 'egl')
-            self.check_pkg_config(True, 'libdrm')
-            self.check_pkg_config(self.options.alsa, 'alsa')
-            self.check_pkg_config(self.options.jack, 'jack')
-            self.check_pkg_config(self.options.pulse, 'libpulse')
-            self.check_pkg_config(self.options.esd, 'esound')
-            self.check_pkg_config(self.options.wayland, 'wayland-client')
-            self.check_pkg_config(self.options.wayland, 'wayland-protocols')
-            self.check_pkg_config(self.options.directfb, 'directfb')
+            self._check_pkg_config(True, 'egl')
+            self._check_pkg_config(True, 'libdrm')
+            self._check_pkg_config(self.options.alsa, 'alsa')
+            self._check_pkg_config(self.options.jack, 'jack')
+            self._check_pkg_config(self.options.pulse, 'libpulse')
+            self._check_pkg_config(self.options.esd, 'esound')
+            self._check_pkg_config(self.options.wayland, 'wayland-client')
+            self._check_pkg_config(self.options.wayland, 'wayland-protocols')
+            self._check_pkg_config(self.options.directfb, 'directfb')
 
     def _configure_cmake(self):
         self._check_dependencies()
