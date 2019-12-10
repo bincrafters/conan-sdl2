@@ -88,6 +88,8 @@ class SDL2Conan(ConanFile):
                 self.requires.add("libxscrnsaver/1.2.3@bincrafters/stable")
             if self.options.xvm:
                 self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
+            if self.options.wayland:
+                self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -125,10 +127,8 @@ class SDL2Conan(ConanFile):
                     packages_apt.append('artsc0-dev')
                 if self.options.wayland:
                     packages_apt.extend(['libwayland-dev',
-                                     'libxkbcommon-dev',
                                      'wayland-protocols'])
                     packages_yum.extend(['wayland-devel',
-                                    'libxkbcommon-devel'
                                     'wayland-protocols-devel'])
                 if self.options.directfb:
                     packages_apt.append('libdirectfb-dev')
