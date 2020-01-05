@@ -281,10 +281,11 @@ class SDL2Conan(ConanFile):
         self.output.info('Creating SDL_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL_CONFIG = sdl2_config
         self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
-        # ensure that libSDL2main is linked first
-        self.cpp_info.libs.reverse()
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
+        else:
+            # ensure that SDL2main is linked first
+            self.cpp_info.libs.insert(0, self.cpp_info.libs.pop(self.cpp_info.libs.index("SDL2main")))
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
             self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
