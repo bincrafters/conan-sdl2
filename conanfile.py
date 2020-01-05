@@ -186,7 +186,7 @@ class SDL2Conan(ConanFile):
                               "if(NOT WINDOWS OR CYGWIN OR MINGW)")
         tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
                               "if(NOT (WINDOWS OR CYGWIN))",
-                              "if(NOT WINDOWS OR CYGWIN OR MINGW)")
+                              "if(NOT (WINDOWS OR CYGWIN OR MINGW))")
         self._build_cmake()
 
     def _check_pkg_config(self, option, package_name):
@@ -278,6 +278,8 @@ class SDL2Conan(ConanFile):
         self.output.info('Creating SDL_CONFIG environment variable: %s' % sdl2_config)
         self.env_info.SDL_CONFIG = sdl2_config
         self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
+        # ensure that libSDL2main is linked first
+        self.cpp_info.libs.reverse()
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs if 'main' not in lib]
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
