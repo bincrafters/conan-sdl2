@@ -223,6 +223,9 @@ class SDL2Conan(ConanFile):
             cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
 
             cmake.definitions['ALSA'] = self.options.alsa
+            if self.options.alsa:
+                cmake.definitions['HAVE_ASOUNDLIB_H'] = True
+                cmake.definitions['HAVE_LIBASOUND'] = True
             cmake.definitions['JACK'] = self.options.jack
             cmake.definitions['PULSEAUDIO'] = self.options.pulse
             cmake.definitions['NAS'] = self.options.nas
