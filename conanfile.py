@@ -73,6 +73,8 @@ class SDL2Conan(ConanFile):
             self.requires.add("libdrm/2.4.100@bincrafters/stable")
             if not tools.which('pkg-config'):
                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
+            if self.options.alsa:
+                self.requires.add("libalsa/1.1.9")
             if self.options.x11:
                 self.requires.add("libx11/1.6.8@bincrafters/stable")
                 self.requires.add("libxext/1.3.4@bincrafters/stable")
@@ -108,9 +110,6 @@ class SDL2Conan(ConanFile):
                 packages_apt.append('libgbm-dev')
                 packages_yum.append('gdm-devel')
 
-                if self.options.alsa:
-                    packages_apt.append('libasound2-dev')
-                    packages_yum.append('alsa-lib-devel')
                 if self.options.jack:
                     packages_apt.append('libjack-dev')
                     packages_yum.append('jack-audio-connection-kit-devel')
