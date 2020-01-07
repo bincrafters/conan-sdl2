@@ -219,6 +219,9 @@ class SDL2Conan(ConanFile):
         cmake.definitions['SDL_SHARED'] = self.options.shared
         cmake.definitions['SDL_STATIC'] = not self.options.shared
         if self.settings.os == "Linux":
+            # See https://github.com/bincrafters/community/issues/696
+            cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
+
             cmake.definitions['ALSA'] = self.options.alsa
             cmake.definitions['JACK'] = self.options.jack
             cmake.definitions['PULSEAUDIO'] = self.options.pulse
