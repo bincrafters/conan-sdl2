@@ -197,7 +197,6 @@ class SDL2Conan(ConanFile):
     def _check_dependencies(self):
         if self.settings.os == 'Linux':
             self._check_pkg_config(True, 'egl')
-            self._check_pkg_config(True, 'libdrm')
             self._check_pkg_config(self.options.jack, 'jack')
             self._check_pkg_config(self.options.pulse, 'libpulse')
             self._check_pkg_config(self.options.esd, 'esound')
