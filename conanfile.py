@@ -198,7 +198,6 @@ class SDL2Conan(ConanFile):
         if self.settings.os == 'Linux':
             self._check_pkg_config(True, 'egl')
             self._check_pkg_config(True, 'libdrm')
-            self._check_pkg_config(self.options.alsa, 'alsa')
             self._check_pkg_config(self.options.jack, 'jack')
             self._check_pkg_config(self.options.pulse, 'libpulse')
             self._check_pkg_config(self.options.esd, 'esound')
@@ -282,8 +281,6 @@ class SDL2Conan(ConanFile):
         self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
         if self.settings.os == "Linux":
             self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
-            if self.options.alsa:
-                self._add_libraries_from_pc('alsa')
             if self.options.jack:
                 self._add_libraries_from_pc('jack')
             if self.options.pulse:
