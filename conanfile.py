@@ -92,6 +92,8 @@ class SDL2Conan(ConanFile):
                 self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
             if self.options.wayland:
                 self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
+            if self.options.pulse:
+                self.requires("pulseaudio/13.0@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -113,9 +115,6 @@ class SDL2Conan(ConanFile):
                 if self.options.jack:
                     packages_apt.append('libjack-dev')
                     packages_yum.append('jack-audio-connection-kit-devel')
-                if self.options.pulse:
-                    packages_apt.append('libpulse-dev')
-                    packages_yum.append('pulseaudio-libs-devel')
                 if self.options.nas:
                     packages_apt.append('libaudio-dev')
                     packages_yum.append('nas-devel')
@@ -198,7 +197,6 @@ class SDL2Conan(ConanFile):
         if self.settings.os == 'Linux':
             self._check_pkg_config(True, 'egl')
             self._check_pkg_config(self.options.jack, 'jack')
-            self._check_pkg_config(self.options.pulse, 'libpulse')
             self._check_pkg_config(self.options.esd, 'esound')
             self._check_pkg_config(self.options.wayland, 'wayland-client')
             self._check_pkg_config(self.options.wayland, 'wayland-protocols')
@@ -246,6 +244,7 @@ class SDL2Conan(ConanFile):
         return cmake
 
     def _build_cmake(self):
+        os.rename('libpulse.pc', 'libpulse-simple.pc')
         cmake = self._configure_cmake()
         cmake.build()
 
@@ -291,8 +290,6 @@ class SDL2Conan(ConanFile):
             self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
             if self.options.jack:
                 self._add_libraries_from_pc('jack')
-            if self.options.pulse:
-                self._add_libraries_from_pc('libpulse', False)
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
