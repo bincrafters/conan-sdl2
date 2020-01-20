@@ -94,6 +94,7 @@ class SDL2Conan(ConanFile):
                 self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
             if self.options.pulse:
                 self.requires("pulseaudio/13.0@bincrafters/stable")
+            self.requires("mesa/19.3.1@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -103,11 +104,6 @@ class SDL2Conan(ConanFile):
                 packages = []
                 packages_apt = []
                 packages_yum = []
-                packages_apt.append('mesa-common-dev')
-                packages_yum.append('mesa-libGL-devel')
-
-                packages_apt.append('libegl1-mesa-dev')
-                packages_yum.append('mesa-libEGL-devel')
 
                 packages_apt.append('libgbm-dev')
                 packages_yum.append('gdm-devel')
@@ -195,7 +191,6 @@ class SDL2Conan(ConanFile):
 
     def _check_dependencies(self):
         if self.settings.os == 'Linux':
-            self._check_pkg_config(True, 'egl')
             self._check_pkg_config(self.options.jack, 'jack')
             self._check_pkg_config(self.options.esd, 'esound')
             self._check_pkg_config(self.options.wayland, 'wayland-client')
@@ -227,16 +222,34 @@ class SDL2Conan(ConanFile):
             cmake.definitions['PULSEAUDIO'] = self.options.pulse
             cmake.definitions['NAS'] = self.options.nas
             cmake.definitions['VIDEO_X11'] = self.options.x11
+            if self.options.x11:
+                cmake.definitions['HAVE_XEXT_H'] = True
             cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
+            if self.options.xcursor:
+                cmake.definitions['HAVE_XCURSOR_H'] = True
             cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
+            if self.options.xinerama:
+                cmake.definitions['HAVE_XINERAMA_H'] = True
             cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
+            if self.options.xinput:
+                cmake.definitions['HAVE_XINPUT_H'] = True
             cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
+            if self.options.xrandr:
+                cmake.definitions['HAVE_XRANDR_H'] = True
             cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
+            if self.options.xscrnsaver:
+                cmake.definitions['HAVE_XSS_H'] = True
             cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
+            if self.options.xshape:
+                cmake.definitions['HAVE_XSHAPE_H'] = True
             cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
+            if self.options.xvm:
+                cmake.definitions['HAVE_XF86VM_H'] = True
             cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
             cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
             cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
+            cmake.definitions['HAVE_VIDEO_OPENGL'] = True
+            cmake.definitions['HAVE_VIDEO_OPENGL_EGL'] = True
         elif self.settings.os == "Windows":
             cmake.definitions["DIRECTX"] = self.options.directx
 
