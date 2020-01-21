@@ -257,7 +257,9 @@ class SDL2Conan(ConanFile):
         return cmake
 
     def _build_cmake(self):
-        os.rename('libpulse.pc', 'libpulse-simple.pc')
+        if self.settings.os == "Linux":
+            if self.options.pulse:
+                os.rename('libpulse.pc', 'libpulse-simple.pc')
         cmake = self._configure_cmake()
         cmake.build()
 
