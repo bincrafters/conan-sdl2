@@ -59,7 +59,7 @@ parameters:
   - name: appleClangVersionsMapping
     type: object
     default:
-      - version: '10.0'
+      - version: 10.0
         image: macOS-10.13
         path: /Applications/Xcode_10.1.app
 
@@ -89,10 +89,7 @@ stages:
             if [[ ! $version == *".0" ]]; then
               CONAN_APPLE_CLANG_VERSIONS=$CONAN_APPLE_CLANG_VERSIONS".0"
             fi;
-            which clang++
-            clang++ --version
             sudo xcode-select -switch $AZP_XCODE_PATH
-            which clang++
             clang++ --version
             python build.py
           env:
@@ -109,18 +106,12 @@ stages:
                   Apple-Clang ${{ clang.version }} Release:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    ${{ if contains(clang.version, '.0') }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
-                    ${{ if not(contains(clang.version, '.0')) }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
                     CONAN_BUILD_TYPES: Release
                   Apple-Clang ${{ clang.version }} Debug:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    ${{ if contains(clang.version, '.0') }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
-                    ${{ if not(contains(clang.version, '.0')) }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
                     CONAN_BUILD_TYPES: Debug
             ${{ if ne(parameters.splitByBuildTypes, 'true') }}:
               ${{ each clang in parameters.appleClangVersionsMapping }}:
@@ -128,10 +119,7 @@ stages:
                   Apple-Clang ${{ clang.version }}:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    ${{ if contains(clang.version, '.0') }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
-                    ${{ if not(contains(clang.version, '.0')) }}:
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
 
     - ${{ if ne(parameters.vsVersions, '') }}:
       - job: Windows
