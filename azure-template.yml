@@ -49,7 +49,7 @@ parameters:
     default:
       - version: 14
         name: 2015
-        image: vs2015-win2012r2
+        image: windows-2019
       - version: 15
         name: 2017
         image: vs2017-win2016
