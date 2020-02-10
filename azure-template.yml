@@ -86,6 +86,9 @@ stages:
             conan user
           displayName: Install Conan
         - script: |
+            if [[ ! $version == *".0" ]]; then
+              CONAN_APPLE_CLANG_VERSIONS=$CONAN_APPLE_CLANG_VERSIONS".0"
+            fi;
             which clang++
             clang++ --version
             sudo xcode-select -switch $AZP_XCODE_PATH
