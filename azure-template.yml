@@ -106,12 +106,18 @@ stages:
                   Apple-Clang ${{ clang.version }} Release:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    ${{ if contains(clang.version, '.0') }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
+                    ${{ if not(contains(clang.version, '.0')) }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
                     CONAN_BUILD_TYPES: Release
                   Apple-Clang ${{ clang.version }} Debug:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    ${{ if contains(clang.version, '.0') }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
+                    ${{ if not(contains(clang.version, '.0')) }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
                     CONAN_BUILD_TYPES: Debug
             ${{ if ne(parameters.splitByBuildTypes, 'true') }}:
               ${{ each clang in parameters.appleClangVersionsMapping }}:
@@ -119,7 +125,10 @@ stages:
                   Apple-Clang ${{ clang.version }}:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
                     AZP_XCODE_PATH: ${{ clang.path }}
-                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    ${{ if contains(clang.version, '.0') }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}.0 
+                    ${{ if not(contains(clang.version, '.0')) }}:
+                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
 
     - ${{ if ne(parameters.vsVersions, '') }}:
       - job: Windows
