@@ -59,7 +59,7 @@ parameters:
   - name: appleClangVersionsMapping
     type: object
     default:
-      - version: "10.0"
+      - version: 10.0
         image: macOS-10.13
         path: /Applications/Xcode_10.1.app
 
@@ -110,6 +110,7 @@ stages:
                     CONAN_BUILD_TYPES: Release
                   Apple-Clang ${{ clang.version }} Debug:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
+                    AZP_XCODE_PATH: ${{ clang.path }}
                     CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
                     CONAN_BUILD_TYPES: Debug
             ${{ if ne(parameters.splitByBuildTypes, 'true') }}:
@@ -117,6 +118,7 @@ stages:
                 ${{ if contains(parameters.appleClangVersions, clang.version) }}:
                   Apple-Clang ${{ clang.version }}:
                     AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
+                    AZP_XCODE_PATH: ${{ clang.path }}
                     CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
 
     - ${{ if ne(parameters.vsVersions, '') }}:
