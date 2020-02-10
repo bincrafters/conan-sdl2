@@ -88,7 +88,7 @@ stages:
         - script: |
             which clang++
             clang++ --version
-            sudo xcode-select -switch ${AZP_XCODE_PATH}
+            sudo xcode-select -switch $AZP_XCODE_PATH
             which clang++
             clang++ --version
             python build.py
