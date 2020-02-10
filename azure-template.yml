@@ -87,8 +87,10 @@ stages:
           displayName: Install Conan
         - script: |
             which clang++
+            clang++ --version
             sudo xcode-select -switch ${AZP_XCODE_PATH}
             which clang++
+            clang++ --version
             python build.py
           env:
             CONAN_LOGIN_USERNAME: ${{ parameters.conanLoginUsername }}
@@ -99,27 +101,23 @@ stages:
           maxParallel: ${{ parameters.jobsMaxParallel }}
           matrix:
             ${{ if eq(parameters.splitByBuildTypes, 'true') }}:
-              ${{ if contains(parameters.appleClangVersions, 10) }}:
-                ${{ each clang in parameters.appleClangVersionsMapping }}:
-                  ${{ if contains(parameters.appleClangVersions, clang.version) }}:
-                    Apple-Clang ${{ clang.version }} Release:
-                      AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
-                      AZP_XCODE_PATH: ${{ clang.path }}
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
-                      CONAN_BUILD_TYPES: Release
-                    Apple-Clang ${{ clang.version }} Debug:
-                      AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
-                      AZP_XCODE_PATH: ${{ clang.path }}
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
-                      CONAN_BUILD_TYPES: Debug
+              ${{ each clang in parameters.appleClangVersionsMapping }}:
+                ${{ if contains(parameters.appleClangVersions, clang.version) }}:
+                  Apple-Clang ${{ clang.version }} Release:
+                    AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
+                    AZP_XCODE_PATH: ${{ clang.path }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    CONAN_BUILD_TYPES: Release
+                  Apple-Clang ${{ clang.version }} Debug:
+                    AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+                    CONAN_BUILD_TYPES: Debug
             ${{ if ne(parameters.splitByBuildTypes, 'true') }}:
-              ${{ if contains(parameters.appleClangVersions, 10) }}:
-                ${{ each clang in parameters.appleClangVersionsMapping }}:
-                  ${{ if contains(parameters.appleClangVersions, clang.version) }}:
-                    Apple-Clang ${{ clang.version }}:
-                      AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
-                      AZP_XCODE_PATH: ${{ clang.path }}
-                      CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
+              ${{ each clang in parameters.appleClangVersionsMapping }}:
+                ${{ if contains(parameters.appleClangVersions, clang.version) }}:
+                  Apple-Clang ${{ clang.version }}:
+                    AZP_BUILD_WORKER_IMAGE: ${{ clang.image }}
+                    CONAN_APPLE_CLANG_VERSIONS: ${{ clang.version }}
 
     - ${{ if ne(parameters.vsVersions, '') }}:
       - job: Windows
