@@ -128,7 +128,6 @@ stages:
         timeoutInMinutes: 180
         steps:
         - task: UsePythonVersion@0
-          condition: ne(variables.CONAN_VISUAL_VERSIONS, 14)
           inputs:
             versionSpec: ${{ parameters.pythonVersion }}
         - task: PowerShell@2
@@ -136,15 +135,8 @@ stages:
           inputs:
             targetType: inline
             script: |
-              Invoke-WebRequest https://aka.ms/nugetclidl -OutFile C:\nuget.exe
-              C:\nuget.exe install python -Version ${{ parameters.pythonVersion }} -ExcludeVersion -OutputDirectory C:\
-              Invoke-WebRequest -OutFile get-pip.py https://bootstrap.pypa.io/get-pip.py
-              C:\python\tools\python.exe get-pip.py
-              Write-Host "##vso[task.prependpath]C:\python\tools"
-              Write-Host "##vso[task.prependpath]C:\python\tools\Scripts"
-              Remove-Item C:\nuget.exe
-              Remove-Item get-pip.py
-          displayName: UsePythonVersion for VS 2015
+              choco install visualstudio2015community
+          displayName: Install VS 2015
         - powershell: |
             $delete = $(
               Start-Process -PassThru -NoNewWindow cmd.exe '/c rmdir /S /Q "C:\ProgramData\chocolatey"';
