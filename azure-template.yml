@@ -59,7 +59,7 @@ parameters:
   - name: appleClangVersionsMapping
     type: object
     default:
-      - version: 10.0
+      - version: "10.0"
         image: macOS-10.13
         path: /Applications/Xcode_10.1.app
 
