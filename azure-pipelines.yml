@@ -6,7 +6,7 @@ resources:
       endpoint: github
 
 extends:
-  template: .ci/azure.yml@templates
+  template: azure-template.yml
   parameters:
     conanLoginUsername: $(CONAN_LOGIN_USERNAME)
     conanPassword: $(CONAN_PASSWORD)
