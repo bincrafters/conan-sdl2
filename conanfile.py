@@ -162,6 +162,8 @@ class SDL2Conan(ConanFile):
         del self.settings.compiler.cppstd
         if self.settings.compiler == 'Visual Studio':
             del self.options.fPIC
+        if self.settings.os == "Macos" and not self.options.iconv:
+            raise ConanInvalidConfiguration("On macOS iconv can't be disabled")
 
     def source(self):
         source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
@@ -321,7 +323,5 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.exelinkflags.append("-Wl,-rpath,/opt/vc/lib")
         elif self.settings.os == "Macos":
             self.cpp_info.frameworks.extend(['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback'])
-            if not self.options.iconv:
-                self.cpp_info.libs.append('iconv')
         elif self.settings.os == "Windows":
             self.cpp_info.system_libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'setupapi', 'shell32'])
