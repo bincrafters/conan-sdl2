@@ -5,7 +5,6 @@ import os
 
 class SDL2Conan(ConanFile):
     name = "sdl2"
-    version = "2.0.10"
     description = "Access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D"
     topics = ("conan", "sdl2", "audio", "keyboard", "graphics", "opengl")
     url = "https://github.com/bincrafters/conan-sdl2"
