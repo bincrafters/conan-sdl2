@@ -166,10 +166,10 @@ class SDL2Conan(ConanFile):
             raise ConanInvalidConfiguration("On macOS iconv can't be disabled")
 
     def source(self):
-        source_url = "https://www.libsdl.org/release/SDL2-%s.tar.gz" % self.version
-        tools.get(source_url, sha256="b4656c13a1f0d0023ae2f4a9cf08ec92fffb464e0f24238337784159b8b91d57")
-        extracted_dir = "SDL2-" + self.version
+        tools.get(**self.conan_data["sources"][self.version])
+        extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
+
         tools.patch(base_path=self._source_subfolder, patch_file=os.path.join("patches", "cmake.patch"))
         # Workaround for linker error with VS2019, see https://bugzilla.libsdl.org/show_bug.cgi?id=4759
         if self.settings.compiler == 'Visual Studio' and self.settings.compiler.version == 16:
