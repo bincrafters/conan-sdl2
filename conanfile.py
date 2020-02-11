@@ -60,7 +60,7 @@ class SDL2Conan(ConanFile):
         "xvm": True,
         "wayland": False,
         "directfb": False,
-        "iconv": False,
+        "iconv": True,
         "video_rpi": False,
         "sdl2main": True
     }
