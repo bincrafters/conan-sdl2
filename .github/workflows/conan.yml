@@ -86,7 +86,7 @@ jobs:
         - { name: "CLANG", version: "9", buildType: "Debug"     }
         - { name: "CLANG", version: "9", buildType: "Release"   }
     name: ${{ matrix.compiler.name }} ${{ matrix.compiler.version }} ${{ matrix.compiler.buildType }}
-    # if: ${{ env.splitByBuildTypes }} == 'true'
+    if: env.splitByBuildTypes == 'true'
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
