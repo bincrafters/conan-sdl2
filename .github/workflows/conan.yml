@@ -86,15 +86,14 @@ jobs:
         - { name: "CLANG", version: "9", buildType: "Debug"     }
         - { name: "CLANG", version: "9", buildType: "Release"   }
     name: ${{ matrix.compiler.name }} ${{ matrix.compiler.version }} ${{ matrix.compiler.buildType }}
-    if: env.splitByBuildTypes == 'true'
+    if: matrix.compiler.name == 'true'
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
           python-version: '3.8'
       - name: Install Conan
         run: |
-          exit 0
           pip install bincrafters-package-tools
           conan user
       - name: Run
