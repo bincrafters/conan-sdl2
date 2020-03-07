@@ -15,44 +15,44 @@
 on: [push, pull_request]
 
 jobs:
-  # splitByBuildTypesFalse:
-  #   runs-on: ubuntu-18.04
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       compiler:
-  #       - { name: "GCC", version: "4.9"   }
-  #       - { name: "GCC", version: "5"     }
-  #       - { name: "GCC", version: "6"     }
-  #       - { name: "GCC", version: "7"     }
-  #       - { name: "GCC", version: "8"     }
-  #       - { name: "GCC", version: "9"     }
-  #       - { name: "CLANG", version: "3.9" }
-  #       - { name: "CLANG", version: "4.0" }
-  #       - { name: "CLANG", version: "5.0" }
-  #       - { name: "CLANG", version: "6.0" }
-  #       - { name: "CLANG", version: "7.0" }
-  #       - { name: "CLANG", version: "8"   }
-  #       - { name: "CLANG", version: "9"   }
-  #   name: ${{ matrix.compiler.name }} ${{ matrix.compiler.version }}
-  #   if: ${{ env.splitByBuildTypes }} != 'true'
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: actions/setup-python@v1
-  #       with:
-  #         python-version: '3.8'
-  #     - name: Install Conan
-  #       run: |
-  #         pip install bincrafters_package_tools
-  #         conan user
-  #     - name: Run
-  #       env:
-  #         CONAN_USE_DOCKER: 1
-  #         CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
-  #         CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
-  #       run: |
-  #         export CONAN_${{ matrix.compiler.name }}_VERSIONS="${{ matrix.compiler.version }}"
-  #         bincrafters-package-tools --auto
+  splitByBuildTypesFalse:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+        - { name: "GCC", version: "4.9"   }
+        - { name: "GCC", version: "5"     }
+        - { name: "GCC", version: "6"     }
+        - { name: "GCC", version: "7"     }
+        - { name: "GCC", version: "8"     }
+        - { name: "GCC", version: "9"     }
+        - { name: "CLANG", version: "3.9" }
+        - { name: "CLANG", version: "4.0" }
+        - { name: "CLANG", version: "5.0" }
+        - { name: "CLANG", version: "6.0" }
+        - { name: "CLANG", version: "7.0" }
+        - { name: "CLANG", version: "8"   }
+        - { name: "CLANG", version: "9"   }
+    name: ${{ matrix.compiler.name }} ${{ matrix.compiler.version }}
+    if: ${{ env.splitByBuildTypes }} != 'true'
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - name: Install Conan
+        run: |
+          pip install bincrafters_package_tools
+          conan user
+      - name: Run
+        env:
+          CONAN_USE_DOCKER: 1
+          CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
+          CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+        run: |
+          export CONAN_${{ matrix.compiler.name }}_VERSIONS="${{ matrix.compiler.version }}"
+          bincrafters-package-tools --auto
   splitByBuildTypesTrue:
     runs-on: ubuntu-18.04
     strategy:
@@ -86,7 +86,7 @@ jobs:
         - { name: "CLANG", version: "9", buildType: "Debug"     }
         - { name: "CLANG", version: "9", buildType: "Release"   }
     name: ${{ matrix.compiler.name }} ${{ matrix.compiler.version }} ${{ matrix.compiler.buildType }}
-    # if: ${{ env.splitByBuildTypes }} == 'true'
+    if: ${{ env.splitByBuildTypes }} == 'true'
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
