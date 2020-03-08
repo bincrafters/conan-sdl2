@@ -76,7 +76,7 @@ jobs:
             if [[ "${docker_image}" == "" ]]; then
               compiler_lower="${compiler,,}"
               version_withoutdot="${version//./}"
-              docker_image="conanio/${compiler_lower}${version}"
+              docker_image="conanio/${compiler_lower}${version_withoutdot}"
             fi
             echo "::set-env name=CONAN_DOCKER_IMAGE::${docker_image}"
             echo "export CONAN_DOCKER_IMAGE=${docker_image}"
