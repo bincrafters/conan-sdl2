@@ -84,7 +84,7 @@ jobs:
           build_type="${{ matrix.config.buildType }}"
           if ! [[ "${build_type}" == "" ]]; then 
             echo "::set-env name=CONAN_BUILD_TYPES::${build_type}"
-            echo "export CONAN_BUILD_TYPES::${build_type}"
+            echo "export CONAN_BUILD_TYPES=${build_type}"
           fi
           if [[ "${compiler}" == "APPLE_CLANG" ]] && [[ "${version}" == "11.0" ]]; then
             sudo xcode-select -switch "/Applications/Xcode_11.3.1.app"
