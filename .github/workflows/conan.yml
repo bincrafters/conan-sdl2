@@ -24,6 +24,7 @@ jobs:
         config:
           - { name: "GCC 4.9 Debug", compiler: "GCC", version: "4.9", os: "ubuntu-18.04", buildType: "Debug", recipeType: "" }
           - { name: "GCC 4.9 Release", compiler: "GCC", version: "4.9", os: "ubuntu-18.04", buildType: "Release", recipeType: "" }
+          - { name: "GCC 4.9 Universal", compiler: "GCC", version: "4.9", os: "ubuntu-18.04", buildType: "", recipeType: "" }
           - { name: "GCC 5 Debug", compiler: "GCC", version: "5", os: "ubuntu-18.04", buildType: "Debug", recipeType: "" }
           - { name: "GCC 5 Release", compiler: "GCC", version: "5", os: "ubuntu-18.04", buildType: "Release", recipeType: "" }
           - { name: "GCC 6 Debug", compiler: "GCC", version: "6", os: "ubuntu-18.04", buildType: "Debug", recipeType: "" }
@@ -55,7 +56,7 @@ jobs:
           - { name: "Installer macOS", compiler: "APPLE_CLANG", version: "11.0", os: "macos-10.15", recipeType: "installer" }
     name: ${{ matrix.config.name }}
     # # FIXME: GHA will support accessing env variables here in the future
-    # if: (env.splitByBuildTypes != 'true' or matrix.buildType != '') and env.recipeType == matrix.config.recipeType
+    if: matrix.buildType == ''
     steps:
       - uses: actions/checkout@v2
         if: env.recipeType == matrix.config.recipeType
