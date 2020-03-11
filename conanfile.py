@@ -61,7 +61,7 @@ class SDL2Conan(ConanFile):
         "video_rpi": False,
         "sdl2main": True
     }
-    
+
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     _cmake = None
@@ -171,7 +171,7 @@ class SDL2Conan(ConanFile):
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
 
-        if self.conan_data["patches"][self.version]:
+        if "patches" in self.conan_data and self.version in self.conan_data["patches"]:
             for patch in self.conan_data["patches"][self.version]:
                 tools.patch(**patch)
 
@@ -270,6 +270,7 @@ class SDL2Conan(ConanFile):
         self.copy(pattern="COPYING.txt", dst="license", src=self._source_subfolder)
         cmake = self._configure_cmake()
         cmake.install(build_dir=self._build_subfolder)
+        tools.rmdir(os.path.join(self.package_folder, "cmake"))
 
     def _add_libraries_from_pc(self, library, static=None):
         if static is None:
