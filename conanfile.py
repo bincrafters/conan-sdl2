@@ -12,8 +12,6 @@ class SDL2Conan(ConanFile):
     license = "Zlib"
     exports_sources = ["CMakeLists.txt", "patches/*"]
     generators = ["cmake", "pkg_config"]
-    _source_subfolder = "source_subfolder"
-    _build_subfolder = "build_subfolder"
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
@@ -63,6 +61,10 @@ class SDL2Conan(ConanFile):
         "video_rpi": False,
         "sdl2main": True
     }
+    
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
+    _cmake = None
 
     def requirements(self):
         if self.options.iconv:
@@ -198,63 +200,64 @@ class SDL2Conan(ConanFile):
             self._check_pkg_config(self.options.directfb, 'directfb')
 
     def _configure_cmake(self):
-        self._check_dependencies()
+        if not self._cmake:
+            self._check_dependencies()
 
-        cmake = CMake(self)
-        # FIXME: self.install_folder not defined? Neccessary?
-        cmake.definitions['CONAN_INSTALL_FOLDER'] = self.install_folder
-        if self.settings.os != 'Windows':
-            if not self.options.shared:
-                cmake.definitions['SDL_STATIC_PIC'] = self.options.fPIC
-        if self.settings.compiler == 'Visual Studio' and not self.options.shared:
-            cmake.definitions['HAVE_LIBC'] = True
-        cmake.definitions['SDL_SHARED'] = self.options.shared
-        cmake.definitions['SDL_STATIC'] = not self.options.shared
-        if self.settings.os == "Linux":
-            # See https://github.com/bincrafters/community/issues/696
-            cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
+            self._cmake = CMake(self)
+            # FIXME: self.install_folder not defined? Neccessary?
+            self._cmake.definitions['CONAN_INSTALL_FOLDER'] = self.install_folder
+            if self.settings.os != 'Windows':
+                if not self.options.shared:
+                    self._cmake.definitions['SDL_STATIC_PIC'] = self.options.fPIC
+            if self.settings.compiler == 'Visual Studio' and not self.options.shared:
+                self._cmake.definitions['HAVE_LIBC'] = True
+            self._cmake.definitions['SDL_SHARED'] = self.options.shared
+            self._cmake.definitions['SDL_STATIC'] = not self.options.shared
+            if self.settings.os == "Linux":
+                # See https://github.com/bincrafters/community/issues/696
+                self._cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
 
-            cmake.definitions['ALSA'] = self.options.alsa
-            if self.options.alsa:
-                cmake.definitions['HAVE_ASOUNDLIB_H'] = True
-                cmake.definitions['HAVE_LIBASOUND'] = True
-            cmake.definitions['JACK'] = self.options.jack
-            cmake.definitions['PULSEAUDIO'] = self.options.pulse
-            cmake.definitions['NAS'] = self.options.nas
-            cmake.definitions['VIDEO_X11'] = self.options.x11
-            if self.options.x11:
-                cmake.definitions['HAVE_XEXT_H'] = True
-            cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
-            if self.options.xcursor:
-                cmake.definitions['HAVE_XCURSOR_H'] = True
-            cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
-            if self.options.xinerama:
-                cmake.definitions['HAVE_XINERAMA_H'] = True
-            cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
-            if self.options.xinput:
-                cmake.definitions['HAVE_XINPUT_H'] = True
-            cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
-            if self.options.xrandr:
-                cmake.definitions['HAVE_XRANDR_H'] = True
-            cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
-            if self.options.xscrnsaver:
-                cmake.definitions['HAVE_XSS_H'] = True
-            cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
-            if self.options.xshape:
-                cmake.definitions['HAVE_XSHAPE_H'] = True
-            cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
-            if self.options.xvm:
-                cmake.definitions['HAVE_XF86VM_H'] = True
-            cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
-            cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
-            cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
-            cmake.definitions['HAVE_VIDEO_OPENGL'] = True
-            cmake.definitions['HAVE_VIDEO_OPENGL_EGL'] = True
-        elif self.settings.os == "Windows":
-            cmake.definitions["DIRECTX"] = self.options.directx
+                self._cmake.definitions['ALSA'] = self.options.alsa
+                if self.options.alsa:
+                    self._cmake.definitions['HAVE_ASOUNDLIB_H'] = True
+                    self._cmake.definitions['HAVE_LIBASOUND'] = True
+                self._cmake.definitions['JACK'] = self.options.jack
+                self._cmake.definitions['PULSEAUDIO'] = self.options.pulse
+                self._cmake.definitions['NAS'] = self.options.nas
+                self._cmake.definitions['VIDEO_X11'] = self.options.x11
+                if self.options.x11:
+                    self._cmake.definitions['HAVE_XEXT_H'] = True
+                self._cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
+                if self.options.xcursor:
+                    self._cmake.definitions['HAVE_XCURSOR_H'] = True
+                self._cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
+                if self.options.xinerama:
+                    self._cmake.definitions['HAVE_XINERAMA_H'] = True
+                self._cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
+                if self.options.xinput:
+                    self._cmake.definitions['HAVE_XINPUT_H'] = True
+                self._cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
+                if self.options.xrandr:
+                    self._cmake.definitions['HAVE_XRANDR_H'] = True
+                self._cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
+                if self.options.xscrnsaver:
+                    self._cmake.definitions['HAVE_XSS_H'] = True
+                self._cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
+                if self.options.xshape:
+                    self._cmake.definitions['HAVE_XSHAPE_H'] = True
+                self._cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
+                if self.options.xvm:
+                    self._cmake.definitions['HAVE_XF86VM_H'] = True
+                self._cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
+                self._cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
+                self._cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
+                self._cmake.definitions['HAVE_VIDEO_OPENGL'] = True
+                self._cmake.definitions['HAVE_VIDEO_OPENGL_EGL'] = True
+            elif self.settings.os == "Windows":
+                self._cmake.definitions["DIRECTX"] = self.options.directx
 
-        cmake.configure(build_dir=self._build_subfolder)
-        return cmake
+            self._cmake.configure(build_dir=self._build_subfolder)
+        return self._cmake
 
     def _build_cmake(self):
         if self.settings.os == "Linux":
