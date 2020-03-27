@@ -17,49 +17,51 @@ class SDL2Conan(ConanFile):
         "shared": [True, False],
         "fPIC": [True, False],
         "directx": [True, False],
-        "alsa": [True, False],
+        "alsa": ["conan", "system", "off"],
         "jack": [True, False],
-        "pulse": [True, False],
+        "pulse": ["conan", "system", "off"],
         "nas": [True, False],
         "esd": [True, False],
         "arts": [True, False],
-        "x11": [True, False],
-        "xcursor": [True, False],
-        "xinerama": [True, False],
-        "xinput": [True, False],
-        "xrandr": [True, False],
-        "xscrnsaver": [True, False],
+        "x11": ["conan", "system", "off"],
+        "xcursor": ["conan", "system", "off"],
+        "xinerama": ["conan", "system", "off"],
+        "xinput": ["conan", "system", "off"],
+        "xrandr": ["conan", "system", "off"],
+        "xscrnsaver": ["conan", "system", "off"],
         "xshape": [True, False],
-        "xvm": [True, False],
+        "xvm": ["conan", "system", "off"],
         "wayland": [True, False],
         "directfb": [True, False],
         "iconv": [True, False],
         "video_rpi": [True, False],
-        "sdl2main": [True, False]
+        "sdl2main": [True, False],
+        "gl": ["mesa", "system"],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
         "directx": True,
-        "alsa": True,
+        "alsa": "system",
         "jack": True,
-        "pulse": True,
+        "pulse": "system",
         "nas": True,
         "esd": False,
         "arts": False,
-        "x11": True,
-        "xcursor": True,
-        "xinerama": True,
-        "xinput": True,
-        "xrandr": True,
-        "xscrnsaver": True,
+        "x11": "system",
+        "xcursor": "system",
+        "xinerama": "system",
+        "xinput": "system",
+        "xrandr": "system",
+        "xscrnsaver": "system",
         "xshape": True,
-        "xvm": True,
+        "xvm": "system",
         "wayland": False,
         "directfb": False,
         "iconv": True,
         "video_rpi": False,
-        "sdl2main": True
+        "sdl2main": True,
+        "gl": "system",
     }
 
     _source_subfolder = "source_subfolder"
@@ -74,28 +76,29 @@ class SDL2Conan(ConanFile):
             self.requires.add("libdrm/2.4.100@bincrafters/stable")
             if not tools.which('pkg-config'):
                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
-            if self.options.alsa:
+            if self.options.alsa == "conan":
                 self.requires.add("libalsa/1.1.9")
-            if self.options.x11:
+            if self.options.x11 == "conan":
                 self.requires.add("libx11/1.6.8@bincrafters/stable")
                 self.requires.add("libxext/1.3.4@bincrafters/stable")
-            if self.options.xcursor:
+            if self.options.xcursor == "conan":
                 self.requires.add("libxcursor/1.2.0@bincrafters/stable")
-            if self.options.xinerama:
+            if self.options.xinerama == "conan":
                 self.requires.add("libxinerama/1.1.4@bincrafters/stable")
-            if self.options.xinput:
+            if self.options.xinput == "conan":
                 self.requires.add("libxi/1.7.10@bincrafters/stable")
-            if self.options.xrandr:
+            if self.options.xrandr == "conan":
                 self.requires.add("libxrandr/1.5.2@bincrafters/stable")
-            if self.options.xscrnsaver:
+            if self.options.xscrnsaver == "conan":
                 self.requires.add("libxscrnsaver/1.2.3@bincrafters/stable")
-            if self.options.xvm:
+            if self.options.xvm == "conan":
                 self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
             if self.options.wayland:
                 self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
-            if self.options.pulse:
+            if self.options.pulse == "conan":
                 self.requires("pulseaudio/13.0@bincrafters/stable")
-            self.requires("mesa/19.3.1@bincrafters/stable")
+            if self.options.gl == "mesa":
+                self.requires("mesa/19.3.1@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -106,12 +109,25 @@ class SDL2Conan(ConanFile):
                 packages_apt = []
                 packages_yum = []
 
+                # Note that while this builds against mesa, the actual implementation might be something else
+                if self.options.gl == "system":
+                    packages_apt.append('mesa-common-dev')
+                    packages_yum.append('mesa-libGL-devel')
+
+                    packages_apt.append('libegl1-mesa-dev')
+                    packages_yum.append('mesa-libEGL-devel')
+
                 packages_apt.append('libgbm-dev')
                 packages_yum.append('gdm-devel')
-
+                if self.options.alsa == "system":
+                    packages_apt.append('libasound2-dev')
+                    packages_yum.append('alsa-lib-devel')
                 if self.options.jack:
                     packages_apt.append('libjack-dev')
                     packages_yum.append('jack-audio-connection-kit-devel')
+                if self.options.pulse == "system":
+                    packages_apt.append('libpulse-dev')
+                    packages_yum.append('pulseaudio-libs-devel')
                 if self.options.nas:
                     packages_apt.append('libaudio-dev')
                     packages_yum.append('nas-devel')
@@ -120,11 +136,34 @@ class SDL2Conan(ConanFile):
                     packages_yum.append('esound-devel')
                 if self.options.arts:
                     packages_apt.append('artsc0-dev')
+                if self.options.x11 == "system":
+                    packages_apt.extend(['libx11-dev',
+                                         'libxext-dev'])
+                    packages_yum.extend(['libX11-devel',
+                                         'libXext-devel'])
+                if self.options.xcursor == "system":
+                    packages_apt.append('libxcursor-dev')
+                    packages_yum.append('libXcursor-devel')
+                if self.options.xinerama == "system":
+                    packages_apt.append('libxinerama-dev')
+                    packages_yum.append('libXinerama-devel')
+                if self.options.xinput == "system":
+                    packages_apt.append('libxi-dev')
+                    packages_yum.append('libXi-devel')
+                if self.options.xrandr == "system":
+                    packages_apt.append('libxrandr-dev')
+                    packages_yum.append('libXrandr-devel')
+                if self.options.xscrnsaver == "system":
+                    packages_apt.append('libxss-dev')
+                    packages_yum.append('libXScrnSaver-devel')
+                if self.options.xvm == "system":
+                    packages_apt.append('libxxf86vm-dev')
+                    packages_yum.append('libXxf86vm-devel')
                 if self.options.wayland:
                     packages_apt.extend(['libwayland-dev',
-                                     'wayland-protocols'])
+                                         'wayland-protocols'])
                     packages_yum.extend(['wayland-devel',
-                                    'wayland-protocols-devel'])
+                                         'wayland-protocols-devel'])
                 if self.options.directfb:
                     packages_apt.append('libdirectfb-dev')
 
@@ -193,6 +232,8 @@ class SDL2Conan(ConanFile):
 
     def _check_dependencies(self):
         if self.settings.os == 'Linux':
+            if self.options.gl == "system":
+                self._check_pkg_config(True, 'egl')
             self._check_pkg_config(self.options.jack, 'jack')
             self._check_pkg_config(self.options.esd, 'esound')
             self._check_pkg_config(self.options.wayland, 'wayland-client')
@@ -218,35 +259,35 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
 
                 self._cmake.definitions['ALSA'] = self.options.alsa
-                if self.options.alsa:
+                if self.options.alsa != "off":
                     self._cmake.definitions['HAVE_ASOUNDLIB_H'] = True
                     self._cmake.definitions['HAVE_LIBASOUND'] = True
                 self._cmake.definitions['JACK'] = self.options.jack
                 self._cmake.definitions['PULSEAUDIO'] = self.options.pulse
                 self._cmake.definitions['NAS'] = self.options.nas
                 self._cmake.definitions['VIDEO_X11'] = self.options.x11
-                if self.options.x11:
+                if self.options.x11 != "off":
                     self._cmake.definitions['HAVE_XEXT_H'] = True
-                self._cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
-                if self.options.xcursor:
+                self._cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor != "off"
+                if self.options.xcursor != "off":
                     self._cmake.definitions['HAVE_XCURSOR_H'] = True
-                self._cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
-                if self.options.xinerama:
+                self._cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama != "off"
+                if self.options.xinerama != "off":
                     self._cmake.definitions['HAVE_XINERAMA_H'] = True
-                self._cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
-                if self.options.xinput:
+                self._cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput != "off"
+                if self.options.xinput != "off":
                     self._cmake.definitions['HAVE_XINPUT_H'] = True
-                self._cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
-                if self.options.xrandr:
+                self._cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr != "off"
+                if self.options.xrandr != "off":
                     self._cmake.definitions['HAVE_XRANDR_H'] = True
-                self._cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
-                if self.options.xscrnsaver:
+                self._cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver != "off"
+                if self.options.xscrnsaver != "off":
                     self._cmake.definitions['HAVE_XSS_H'] = True
                 self._cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
                 if self.options.xshape:
                     self._cmake.definitions['HAVE_XSHAPE_H'] = True
-                self._cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
-                if self.options.xvm:
+                self._cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm != "off"
+                if self.options.xvm != "off":
                     self._cmake.definitions['HAVE_XF86VM_H'] = True
                 self._cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
                 self._cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
@@ -261,7 +302,7 @@ class SDL2Conan(ConanFile):
 
     def _build_cmake(self):
         if self.settings.os == "Linux":
-            if self.options.pulse:
+            if self.options.pulse == "conan":
                 os.rename('libpulse.pc', 'libpulse-simple.pc')
         cmake = self._configure_cmake()
         cmake.build()
