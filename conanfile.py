@@ -37,6 +37,7 @@ class SDL2Conan(ConanFile):
         "video_rpi": [True, False],
         "sdl2main": [True, False],
         "gl": ["mesa", "system"],
+        "drm": [True, False],
     }
     default_options = {
         "shared": False,
