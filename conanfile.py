@@ -61,6 +61,7 @@ class SDL2Conan(ConanFile):
         "iconv": True,
         "video_rpi": False,
         "sdl2main": True,
+        "drm": False,
         "gl": "system",
     }
 
@@ -73,7 +74,8 @@ class SDL2Conan(ConanFile):
             self.requires.add("libiconv/1.16")
 
         if self.settings.os == "Linux" and tools.os_info.is_linux:
-            self.requires.add("libdrm/2.4.100@bincrafters/stable")
+            if self.options.drm:
+                self.requires.add("libdrm/2.4.100@bincrafters/stable")
             if not tools.which('pkg-config'):
                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
             if self.options.alsa == "conan":
