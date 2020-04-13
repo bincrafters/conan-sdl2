@@ -95,7 +95,7 @@ class SDL2Conan(ConanFile):
                 self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
             if self.options.pulse:
                 self.requires("pulseaudio/13.0@bincrafters/stable")
-            self.requires("mesa/19.3.1@bincrafters/stable")
+            self.requires("opengl/virtual@bincrafters/stable")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
