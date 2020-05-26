@@ -13,6 +13,7 @@ class SDL2Conan(ConanFile):
     exports_sources = ["CMakeLists.txt", "patches/*"]
     generators = ["cmake", "pkg_config"]
     settings = "os", "arch", "compiler", "build_type"
+    version = "2.0.12"
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
@@ -35,7 +36,13 @@ class SDL2Conan(ConanFile):
         "directfb": [True, False],
         "iconv": [True, False],
         "video_rpi": [True, False],
-        "sdl2main": [True, False]
+        "sdl2main": [True, False],
+        "video_metal": [True, False],
+        "render_metal": [True, False],
+        "video_offscreen": [True, False],
+        "armsimd": [True, False],
+        "armneon": [True, False],
+        "render_d3d": [True, False]
     }
     default_options = {
         "shared": False,
@@ -59,7 +66,13 @@ class SDL2Conan(ConanFile):
         "directfb": False,
         "iconv": True,
         "video_rpi": False,
-        "sdl2main": True
+        "sdl2main": True,
+        "render_metal": True,
+        "video_metal": True,
+        "video_offscreen": False,
+        "armsimd": True,
+        "armneon": True,
+        "render_d3d": True
     }
 
     _source_subfolder = "source_subfolder"
@@ -157,6 +170,11 @@ class SDL2Conan(ConanFile):
             self.options.remove('video_rpi')
         if self.settings.os != "Windows":
             self.options.remove("directx")
+            self.options.remove("render_d3d")
+
+        if self.settings.os != "Macos": # iOS/tvOS/... ?
+            self.options.remove("render_metal")
+            self.options.remove("video_metal")
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -213,6 +231,10 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions['HAVE_LIBC'] = True
             self._cmake.definitions['SDL_SHARED'] = self.options.shared
             self._cmake.definitions['SDL_STATIC'] = not self.options.shared
+
+            self._cmake.definitions['ARMSIMD'] = not self.options.armsimd
+            self._cmake.definitions['ARMNEON'] = not self.options.armneon
+
             if self.settings.os == "Linux":
                 # See https://github.com/bincrafters/community/issues/696
                 self._cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
@@ -255,6 +277,15 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions['HAVE_VIDEO_OPENGL_EGL'] = True
             elif self.settings.os == "Windows":
                 self._cmake.definitions["DIRECTX"] = self.options.directx
+                self._cmake.definitions["RENDER_D3D"] = self.options.render_d3d
+
+            elif self.settings.os == "Macos":# TODO: ios, tvos, ... ?
+
+                if self.options.video_metal:
+                    self._cmake.definitions['HAVE_FRAMEWORK_METAL'] = True
+
+                self._cmake.definitions["VIDEO_METAL"] = self.options.video_metal
+                self._cmake.definitions["RENDER_METAL"] = self.options.render_metal
 
             self._cmake.configure(build_dir=self._build_subfolder)
         return self._cmake
@@ -327,6 +358,6 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.sharedlinkflags.append("-Wl,-rpath,/opt/vc/lib")
                 self.cpp_info.exelinkflags.append("-Wl,-rpath,/opt/vc/lib")
         elif self.settings.os == "Macos":
-            self.cpp_info.frameworks.extend(['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback'])
+            self.cpp_info.frameworks.extend(['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback', 'AVFoundation', 'Metal'])
         elif self.settings.os == "Windows":
             self.cpp_info.system_libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'setupapi', 'shell32'])
