@@ -279,7 +279,7 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions["DIRECTX"] = self.options.directx
                 self._cmake.definitions["RENDER_D3D"] = self.options.render_d3d
 
-            elif self.settings.os == "Macos":# TODO: ios, tvos, ... ?
+            elif tools.is_apple_os():
 
                 if self.options.video_metal:
                     self._cmake.definitions['HAVE_FRAMEWORK_METAL'] = True
