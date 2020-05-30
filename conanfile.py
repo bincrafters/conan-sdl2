@@ -172,7 +172,7 @@ class SDL2Conan(ConanFile):
             self.options.remove("directx")
             self.options.remove("render_d3d")
 
-        if self.settings.os != "Macos": # iOS/tvOS/... ?
+        if not tools.is_apple_os():
             self.options.remove("render_metal")
             self.options.remove("video_metal")
 
