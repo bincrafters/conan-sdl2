@@ -19,15 +19,21 @@ If you wish to report an issue or make a request for a package, please do so her
 ### Available Package Options
 | Option        | Default | Possible Values  |
 | ------------- |:----------------- |:------------:|
-| shared      | False |  [True, False] |
-| fPIC      | True |  [True, False] |
-| directx      | True |  [True, False] |
 | alsa      | True |  [True, False] |
-| jack      | True |  [True, False] |
-| pulse      | True |  [True, False] |
-| nas      | True |  [True, False] |
-| esd      | False |  [True, False] |
 | arts      | False |  [True, False] |
+| directfb      | False |  [True, False] |
+| directx      | True |  [True, False] |
+| esd      | False |  [True, False] |
+| gdm      | True  |  [True, False] |
+| fPIC      | True |  [True, False] |
+| iconv      | False |  [True, False] |
+| jack      | True |  [True, False] |
+| nas      | True |  [True, False] |
+| pulse      | True |  [True, False] |
+| sdl2main      | True |  [True, False] |
+| shared      | False |  [True, False] |
+| video_rpi      | False |  [True, False] |
+| wayland      | False |  [True, False] |
 | x11      | True |  [True, False] |
 | xcursor      | True |  [True, False] |
 | xinerama      | True |  [True, False] |
@@ -36,11 +42,6 @@ If you wish to report an issue or make a request for a package, please do so her
 | xscrnsaver      | True |  [True, False] |
 | xshape      | True |  [True, False] |
 | xvm      | True |  [True, False] |
-| wayland      | False |  [True, False] |
-| directfb      | False |  [True, False] |
-| iconv      | False |  [True, False] |
-| video_rpi      | False |  [True, False] |
-| sdl2main      | True |  [True, False] |
 
 
 ## Add Remote

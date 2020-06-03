@@ -14,15 +14,21 @@ class SDL2Conan(ConanFile):
     generators = ["cmake", "pkg_config"]
     settings = "os", "arch", "compiler", "build_type"
     options = {
-        "shared": [True, False],
-        "fPIC": [True, False],
-        "directx": [True, False],
         "alsa": [True, False],
-        "jack": [True, False],
-        "pulse": [True, False],
-        "nas": [True, False],
-        "esd": [True, False],
         "arts": [True, False],
+        "directfb": [True, False],
+        "directx": [True, False],
+        "esd": [True, False],
+        "fPIC": [True, False],
+        "gdm": [True, False],
+        "iconv": [True, False],
+        "jack": [True, False],
+        "nas": [True, False],
+        "pulse": [True, False],
+        "sdl2main": [True, False],
+        "shared": [True, False],
+        "video_rpi": [True, False],
+        "wayland": [True, False],
         "x11": [True, False],
         "xcursor": [True, False],
         "xinerama": [True, False],
@@ -30,23 +36,24 @@ class SDL2Conan(ConanFile):
         "xrandr": [True, False],
         "xscrnsaver": [True, False],
         "xshape": [True, False],
-        "xvm": [True, False],
-        "wayland": [True, False],
-        "directfb": [True, False],
-        "iconv": [True, False],
-        "video_rpi": [True, False],
-        "sdl2main": [True, False]
+        "xvm": [True, False]
     }
     default_options = {
-        "shared": False,
-        "fPIC": True,
-        "directx": True,
         "alsa": True,
-        "jack": True,
-        "pulse": True,
-        "nas": True,
-        "esd": False,
         "arts": False,
+        "directfb": False,
+        "directx": True,
+        "esd": False,
+        "fPIC": True,
+        "gdm": False,
+        "iconv": True,
+        "jack": True,
+        "nas": True,
+        "pulse": True,
+        "sdl2main": True,
+        "shared": False,
+        "video_rpi": False,
+        "wayland": False,
         "x11": True,
         "xcursor": True,
         "xinerama": True,
@@ -54,12 +61,7 @@ class SDL2Conan(ConanFile):
         "xrandr": True,
         "xscrnsaver": True,
         "xshape": True,
-        "xvm": True,
-        "wayland": False,
-        "directfb": False,
-        "iconv": True,
-        "video_rpi": False,
-        "sdl2main": True
+        "xvm": True
     }
 
     _source_subfolder = "source_subfolder"
@@ -106,9 +108,9 @@ class SDL2Conan(ConanFile):
                 packages_apt = []
                 packages_yum = []
 
-                packages_apt.append('libgbm-dev')
-                packages_yum.append('gdm-devel')
-
+                if self.options.gdm:
+                    packages_apt.append('libgbm-dev')
+                    packages_yum.append('gdm-devel')
                 if self.options.jack:
                     packages_apt.append('libjack-dev')
                     packages_yum.append('jack-audio-connection-kit-devel')
@@ -139,11 +141,12 @@ class SDL2Conan(ConanFile):
     def config_options(self):
         if self.settings.os != "Linux":
             self.options.remove("alsa")
-            self.options.remove("jack")
-            self.options.remove("pulse")
-            self.options.remove("nas")
-            self.options.remove("esd")
             self.options.remove("arts")
+            self.options.remove("esd")
+            self.options.remove("gdm")
+            self.options.remove("jack")
+            self.options.remove("nas")
+            self.options.remove("pulse")
             self.options.remove("x11")
             self.options.remove("xcursor")
             self.options.remove("xinerama")
@@ -152,9 +155,9 @@ class SDL2Conan(ConanFile):
             self.options.remove("xscrnsaver")
             self.options.remove("xshape")
             self.options.remove("xvm")
-            self.options.remove('wayland')
             self.options.remove('directfb')
             self.options.remove('video_rpi')
+            self.options.remove('wayland')
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
