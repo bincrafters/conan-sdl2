@@ -20,6 +20,7 @@ class SDL2Conan(ConanFile):
         "alsa": [True, False],
         "jack": [True, False],
         "pulse": [True, False],
+        "sndio": [True, False],
         "nas": [True, False],
         "esd": [True, False],
         "arts": [True, False],
@@ -44,6 +45,7 @@ class SDL2Conan(ConanFile):
         "alsa": True,
         "jack": True,
         "pulse": True,
+        "sndio": False,
         "nas": True,
         "esd": False,
         "arts": False,
@@ -112,6 +114,8 @@ class SDL2Conan(ConanFile):
                 if self.options.jack:
                     packages_apt.append('libjack-dev')
                     packages_yum.append('jack-audio-connection-kit-devel')
+                if self.options.sndio:
+                    packages_apt.append('libsndio-dev')
                 if self.options.nas:
                     packages_apt.append('libaudio-dev')
                     packages_yum.append('nas-devel')
@@ -141,6 +145,7 @@ class SDL2Conan(ConanFile):
             self.options.remove("alsa")
             self.options.remove("jack")
             self.options.remove("pulse")
+            self.options.remove("sndio")
             self.options.remove("nas")
             self.options.remove("esd")
             self.options.remove("arts")
@@ -223,6 +228,7 @@ class SDL2Conan(ConanFile):
                     self._cmake.definitions['HAVE_LIBASOUND'] = True
                 self._cmake.definitions['JACK'] = self.options.jack
                 self._cmake.definitions['PULSEAUDIO'] = self.options.pulse
+                self._cmake.definitions['SNDIO'] = self.options.sndio
                 self._cmake.definitions['NAS'] = self.options.nas
                 self._cmake.definitions['VIDEO_X11'] = self.options.x11
                 if self.options.x11:
@@ -312,6 +318,8 @@ class SDL2Conan(ConanFile):
             self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
             if self.options.jack:
                 self._add_libraries_from_pc('jack')
+            if self.options.sndio:
+                self._add_libraries_from_pc('sndio')
             if self.options.nas:
                 self.cpp_info.libs.append('audio')
             if self.options.esd:
