@@ -74,7 +74,7 @@ class SDL2Conan(ConanFile):
 
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             self.requires.add("libdrm/2.4.100@bincrafters/stable")
-            if not tools.which('pkg-config'):
+            if not tools.which("pkg-config"):
                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
             if self.options.alsa:
                 self.requires.add("libalsa/1.1.9")
@@ -108,29 +108,29 @@ class SDL2Conan(ConanFile):
                 packages_apt = []
                 packages_yum = []
 
-                packages_apt.append('libgbm-dev')
-                packages_yum.append('gdm-devel')
+                packages_apt.append("libgbm-dev")
+                packages_yum.append("gdm-devel")
 
                 if self.options.jack:
-                    packages_apt.append('libjack-dev')
-                    packages_yum.append('jack-audio-connection-kit-devel')
+                    packages_apt.append("libjack-dev")
+                    packages_yum.append("jack-audio-connection-kit-devel")
                 if self.options.sndio:
-                    packages_apt.append('libsndio-dev')
+                    packages_apt.append("libsndio-dev")
                 if self.options.nas:
-                    packages_apt.append('libaudio-dev')
-                    packages_yum.append('nas-devel')
+                    packages_apt.append("libaudio-dev")
+                    packages_yum.append("nas-devel")
                 if self.options.esd:
-                    packages_apt.append('libesd0-dev')
-                    packages_yum.append('esound-devel')
+                    packages_apt.append("libesd0-dev")
+                    packages_yum.append("esound-devel")
                 if self.options.arts:
-                    packages_apt.append('artsc0-dev')
+                    packages_apt.append("artsc0-dev")
                 if self.options.wayland:
-                    packages_apt.extend(['libwayland-dev',
-                                     'wayland-protocols'])
-                    packages_yum.extend(['wayland-devel',
-                                    'wayland-protocols-devel'])
+                    packages_apt.extend(["libwayland-dev",
+                                     "wayland-protocols"])
+                    packages_yum.extend(["wayland-devel",
+                                    "wayland-protocols-devel"])
                 if self.options.directfb:
-                    packages_apt.append('libdirectfb-dev')
+                    packages_apt.append("libdirectfb-dev")
 
                 if tools.os_info.with_apt:
                     packages = packages_apt
@@ -157,16 +157,16 @@ class SDL2Conan(ConanFile):
             self.options.remove("xscrnsaver")
             self.options.remove("xshape")
             self.options.remove("xvm")
-            self.options.remove('wayland')
-            self.options.remove('directfb')
-            self.options.remove('video_rpi')
+            self.options.remove("wayland")
+            self.options.remove("directfb")
+            self.options.remove("video_rpi")
         if self.settings.os != "Windows":
             self.options.remove("directx")
 
     def configure(self):
         del self.settings.compiler.libcxx
         del self.settings.compiler.cppstd
-        if self.settings.compiler == 'Visual Studio':
+        if self.settings.compiler == "Visual Studio":
             del self.options.fPIC
         if self.settings.os == "Macos" and not self.options.iconv:
             raise ConanInvalidConfiguration("On macOS iconv can't be disabled")
@@ -194,15 +194,15 @@ class SDL2Conan(ConanFile):
         if option:
             pkg_config = tools.PkgConfig(package_name)
             if not pkg_config.provides:
-                raise ConanInvalidConfiguration('package %s is not available' % package_name)
+                raise ConanInvalidConfiguration("package %s is not available" % package_name)
 
     def _check_dependencies(self):
-        if self.settings.os == 'Linux':
-            self._check_pkg_config(self.options.jack, 'jack')
-            self._check_pkg_config(self.options.esd, 'esound')
-            self._check_pkg_config(self.options.wayland, 'wayland-client')
-            self._check_pkg_config(self.options.wayland, 'wayland-protocols')
-            self._check_pkg_config(self.options.directfb, 'directfb')
+        if self.settings.os == "Linux":
+            self._check_pkg_config(self.options.jack, "jack")
+            self._check_pkg_config(self.options.esd, "esound")
+            self._check_pkg_config(self.options.wayland, "wayland-client")
+            self._check_pkg_config(self.options.wayland, "wayland-protocols")
+            self._check_pkg_config(self.options.directfb, "directfb")
 
     def _configure_cmake(self):
         if not self._cmake:
@@ -210,55 +210,55 @@ class SDL2Conan(ConanFile):
 
             self._cmake = CMake(self)
             # FIXME: self.install_folder not defined? Neccessary?
-            self._cmake.definitions['CONAN_INSTALL_FOLDER'] = self.install_folder
-            if self.settings.os != 'Windows':
+            self._cmake.definitions["CONAN_INSTALL_FOLDER"] = self.install_folder
+            if self.settings.os != "Windows":
                 if not self.options.shared:
-                    self._cmake.definitions['SDL_STATIC_PIC'] = self.options.fPIC
-            if self.settings.compiler == 'Visual Studio' and not self.options.shared:
-                self._cmake.definitions['HAVE_LIBC'] = True
-            self._cmake.definitions['SDL_SHARED'] = self.options.shared
-            self._cmake.definitions['SDL_STATIC'] = not self.options.shared
+                    self._cmake.definitions["SDL_STATIC_PIC"] = self.options.fPIC
+            if self.settings.compiler == "Visual Studio" and not self.options.shared:
+                self._cmake.definitions["HAVE_LIBC"] = True
+            self._cmake.definitions["SDL_SHARED"] = self.options.shared
+            self._cmake.definitions["SDL_STATIC"] = not self.options.shared
             if self.settings.os == "Linux":
                 # See https://github.com/bincrafters/community/issues/696
-                self._cmake.definitions['SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS'] = 1
+                self._cmake.definitions["SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS"] = 1
 
-                self._cmake.definitions['ALSA'] = self.options.alsa
+                self._cmake.definitions["ALSA"] = self.options.alsa
                 if self.options.alsa:
-                    self._cmake.definitions['HAVE_ASOUNDLIB_H'] = True
-                    self._cmake.definitions['HAVE_LIBASOUND'] = True
-                self._cmake.definitions['JACK'] = self.options.jack
-                self._cmake.definitions['PULSEAUDIO'] = self.options.pulse
-                self._cmake.definitions['SNDIO'] = self.options.sndio
-                self._cmake.definitions['NAS'] = self.options.nas
-                self._cmake.definitions['VIDEO_X11'] = self.options.x11
+                    self._cmake.definitions["HAVE_ASOUNDLIB_H"] = True
+                    self._cmake.definitions["HAVE_LIBASOUND"] = True
+                self._cmake.definitions["JACK"] = self.options.jack
+                self._cmake.definitions["PULSEAUDIO"] = self.options.pulse
+                self._cmake.definitions["SNDIO"] = self.options.sndio
+                self._cmake.definitions["NAS"] = self.options.nas
+                self._cmake.definitions["VIDEO_X11"] = self.options.x11
                 if self.options.x11:
-                    self._cmake.definitions['HAVE_XEXT_H'] = True
-                self._cmake.definitions['VIDEO_X11_XCURSOR'] = self.options.xcursor
+                    self._cmake.definitions["HAVE_XEXT_H"] = True
+                self._cmake.definitions["VIDEO_X11_XCURSOR"] = self.options.xcursor
                 if self.options.xcursor:
-                    self._cmake.definitions['HAVE_XCURSOR_H'] = True
-                self._cmake.definitions['VIDEO_X11_XINERAMA'] = self.options.xinerama
+                    self._cmake.definitions["HAVE_XCURSOR_H"] = True
+                self._cmake.definitions["VIDEO_X11_XINERAMA"] = self.options.xinerama
                 if self.options.xinerama:
-                    self._cmake.definitions['HAVE_XINERAMA_H'] = True
-                self._cmake.definitions['VIDEO_X11_XINPUT'] = self.options.xinput
+                    self._cmake.definitions["HAVE_XINERAMA_H"] = True
+                self._cmake.definitions["VIDEO_X11_XINPUT"] = self.options.xinput
                 if self.options.xinput:
-                    self._cmake.definitions['HAVE_XINPUT_H'] = True
-                self._cmake.definitions['VIDEO_X11_XRANDR'] = self.options.xrandr
+                    self._cmake.definitions["HAVE_XINPUT_H"] = True
+                self._cmake.definitions["VIDEO_X11_XRANDR"] = self.options.xrandr
                 if self.options.xrandr:
-                    self._cmake.definitions['HAVE_XRANDR_H'] = True
-                self._cmake.definitions['VIDEO_X11_XSCRNSAVER'] = self.options.xscrnsaver
+                    self._cmake.definitions["HAVE_XRANDR_H"] = True
+                self._cmake.definitions["VIDEO_X11_XSCRNSAVER"] = self.options.xscrnsaver
                 if self.options.xscrnsaver:
-                    self._cmake.definitions['HAVE_XSS_H'] = True
-                self._cmake.definitions['VIDEO_X11_XSHAPE'] = self.options.xshape
+                    self._cmake.definitions["HAVE_XSS_H"] = True
+                self._cmake.definitions["VIDEO_X11_XSHAPE"] = self.options.xshape
                 if self.options.xshape:
-                    self._cmake.definitions['HAVE_XSHAPE_H'] = True
-                self._cmake.definitions['VIDEO_X11_XVM'] = self.options.xvm
+                    self._cmake.definitions["HAVE_XSHAPE_H"] = True
+                self._cmake.definitions["VIDEO_X11_XVM"] = self.options.xvm
                 if self.options.xvm:
-                    self._cmake.definitions['HAVE_XF86VM_H'] = True
-                self._cmake.definitions['VIDEO_WAYLAND'] = self.options.wayland
-                self._cmake.definitions['VIDEO_DIRECTFB'] = self.options.directfb
-                self._cmake.definitions['VIDEO_RPI'] = self.options.video_rpi
-                self._cmake.definitions['HAVE_VIDEO_OPENGL'] = True
-                self._cmake.definitions['HAVE_VIDEO_OPENGL_EGL'] = True
+                    self._cmake.definitions["HAVE_XF86VM_H"] = True
+                self._cmake.definitions["VIDEO_WAYLAND"] = self.options.wayland
+                self._cmake.definitions["VIDEO_DIRECTFB"] = self.options.directfb
+                self._cmake.definitions["VIDEO_RPI"] = self.options.video_rpi
+                self._cmake.definitions["HAVE_VIDEO_OPENGL"] = True
+                self._cmake.definitions["HAVE_VIDEO_OPENGL_EGL"] = True
             elif self.settings.os == "Windows":
                 self._cmake.definitions["DIRECTX"] = self.options.directx
 
@@ -268,7 +268,7 @@ class SDL2Conan(ConanFile):
     def _build_cmake(self):
         if self.settings.os == "Linux":
             if self.options.pulse:
-                os.rename('libpulse.pc', 'libpulse-simple.pc')
+                os.rename("libpulse.pc", "libpulse-simple.pc")
         cmake = self._configure_cmake()
         cmake.build()
 
@@ -294,17 +294,17 @@ class SDL2Conan(ConanFile):
 
     @staticmethod
     def _chmod_plus_x(filename):
-        if os.name == 'posix':
+        if os.name == "posix":
             os.chmod(filename, os.stat(filename).st_mode | 0o111)
 
     def package_info(self):
-        sdl2_config = os.path.join(self.package_folder, 'bin', "sdl2-config")
+        sdl2_config = os.path.join(self.package_folder, "bin", "sdl2-config")
         self._chmod_plus_x(sdl2_config)
-        self.output.info('Creating SDL2_CONFIG environment variable: %s' % sdl2_config)
+        self.output.info("Creating SDL2_CONFIG environment variable: %s" % sdl2_config)
         self.env_info.SDL2_CONFIG = sdl2_config
-        self.output.info('Creating SDL_CONFIG environment variable: %s' % sdl2_config)
+        self.output.info("Creating SDL_CONFIG environment variable: %s" % sdl2_config)
         self.env_info.SDL_CONFIG = sdl2_config
-        self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if '2.0' not in lib]
+        self.cpp_info.libs = [lib for lib in tools.collect_libs(self) if "2.0" not in lib]
         if not self.options.sdl2main:
             self.cpp_info.libs = [lib for lib in self.cpp_info.libs]
         else:
@@ -313,21 +313,21 @@ class SDL2Conan(ConanFile):
             if self.settings.build_type == "Debug":
                 sdl2mainlib = "SDL2maind"
             self.cpp_info.libs.insert(0, self.cpp_info.libs.pop(self.cpp_info.libs.index(sdl2mainlib)))
-        self.cpp_info.includedirs.append(os.path.join('include', 'SDL2'))
+        self.cpp_info.includedirs.append(os.path.join("include", "SDL2"))
         if self.settings.os == "Linux":
-            self.cpp_info.system_libs.extend(['dl', 'rt', 'pthread'])
+            self.cpp_info.system_libs.extend(["dl", "rt", "pthread"])
             if self.options.jack:
-                self._add_libraries_from_pc('jack')
+                self._add_libraries_from_pc("jack")
             if self.options.sndio:
-                self._add_libraries_from_pc('sndio')
+                self._add_libraries_from_pc("sndio")
             if self.options.nas:
-                self.cpp_info.libs.append('audio')
+                self.cpp_info.libs.append("audio")
             if self.options.esd:
-                self._add_libraries_from_pc('esound')
+                self._add_libraries_from_pc("esound")
             if self.options.directfb:
-                self._add_libraries_from_pc('directfb')
+                self._add_libraries_from_pc("directfb")
             if self.options.video_rpi:
-                self.cpp_info.libs.append('bcm_host')
+                self.cpp_info.libs.append("bcm_host")
                 self.cpp_info.includedirs.extend(["/opt/vc/include",
                                                   "/opt/vc/include/interface/vcos/pthreads",
                                                   "/opt/vc/include/interface/vmcs_host/linux"])
@@ -335,8 +335,8 @@ class SDL2Conan(ConanFile):
                 self.cpp_info.sharedlinkflags.append("-Wl,-rpath,/opt/vc/lib")
                 self.cpp_info.exelinkflags.append("-Wl,-rpath,/opt/vc/lib")
         elif self.settings.os == "Macos":
-            self.cpp_info.frameworks.extend(['Cocoa', 'Carbon', 'IOKit', 'CoreVideo', 'CoreAudio', 'AudioToolbox', 'ForceFeedback'])
+            self.cpp_info.frameworks.extend(["Cocoa", "Carbon", "IOKit", "CoreVideo", "CoreAudio", "AudioToolbox", "ForceFeedback"])
         elif self.settings.os == "Windows":
-            self.cpp_info.system_libs.extend(['user32', 'gdi32', 'winmm', 'imm32', 'ole32', 'oleaut32', 'version', 'uuid', 'advapi32', 'setupapi', 'shell32'])
+            self.cpp_info.system_libs.extend(["user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32"])
         self.cpp_info.names["cmake_find_package"] = "SDL2"
         self.cpp_info.names["cmake_find_package_multi"] = "SDL2"
