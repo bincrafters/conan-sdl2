@@ -78,21 +78,9 @@ class SDL2Conan(ConanFile):
                 self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
             if self.options.alsa:
                 self.requires.add("libalsa/1.1.9")
-            if self.options.x11:
-                self.requires.add("libx11/1.6.8@bincrafters/stable")
-                self.requires.add("libxext/1.3.4@bincrafters/stable")
-            if self.options.xcursor:
-                self.requires.add("libxcursor/1.2.0@bincrafters/stable")
-            if self.options.xinerama:
-                self.requires.add("libxinerama/1.1.4@bincrafters/stable")
-            if self.options.xinput:
-                self.requires.add("libxi/1.7.10@bincrafters/stable")
-            if self.options.xrandr:
-                self.requires.add("libxrandr/1.5.2@bincrafters/stable")
-            if self.options.xscrnsaver:
-                self.requires.add("libxscrnsaver/1.2.3@bincrafters/stable")
-            if self.options.xvm:
-                self.requires.add("libxxf86vm/1.1.4@bincrafters/stable")
+            if self.options.x11 or self.options.xcursor or self.options.xinerama or self.options.xinput or \
+               self.options.xrandr or self.options.xscrnsaver or self.options.xvm:
+                self.requires.add("xorg/system")
             if self.options.wayland:
                 self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
             if self.options.pulse:
