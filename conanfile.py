@@ -70,19 +70,14 @@ class SDL2Conan(ConanFile):
 
     def requirements(self):
         if self.options.iconv:
-            self.requires.add("libiconv/1.16")
+            self.requires("libiconv/1.16")
 
         if self.settings.os == "Linux" and tools.os_info.is_linux:
-            self.requires.add("libdrm/2.4.100@bincrafters/stable")
+            self.requires("xorg/system")
             if not tools.which("pkg-config"):
-                self.requires.add("pkg-config_installer/0.29.2@bincrafters/stable")
+                self.requires("pkg-config_installer/0.29.2@bincrafters/stable")
             if self.options.alsa:
-                self.requires.add("libalsa/1.1.9")
-            if self.options.x11 or self.options.xcursor or self.options.xinerama or self.options.xinput or \
-               self.options.xrandr or self.options.xscrnsaver or self.options.xvm:
-                self.requires.add("xorg/system")
-            if self.options.wayland:
-                self.requires.add("xkbcommon/0.9.1@bincrafters/stable")
+                self.requires("libalsa/1.1.9")
             if self.options.pulse:
                 self.requires("pulseaudio/13.0@bincrafters/stable")
             self.requires("opengl/system")
