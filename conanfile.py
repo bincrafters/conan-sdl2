@@ -321,5 +321,7 @@ class SDL2Conan(ConanFile):
             self.cpp_info.frameworks.extend(["Cocoa", "Carbon", "IOKit", "CoreVideo", "CoreAudio", "AudioToolbox", "ForceFeedback"])
         elif self.settings.os == "Windows":
             self.cpp_info.system_libs.extend(["user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32"])
+            if self.settings.compiler == "gcc":
+                self.cpp_info.system_libs.append("mingw32")
         self.cpp_info.names["cmake_find_package"] = "SDL2"
         self.cpp_info.names["cmake_find_package_multi"] = "SDL2"
