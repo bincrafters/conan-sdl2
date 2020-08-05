@@ -36,7 +36,9 @@ class SDL2Conan(ConanFile):
         "directfb": [True, False],
         "iconv": [True, False],
         "video_rpi": [True, False],
-        "sdl2main": [True, False]
+        "sdl2main": [True, False],
+        "opengl": [True, False],
+        "opengles": [True, False],
     }
     default_options = {
         "shared": False,
@@ -61,7 +63,9 @@ class SDL2Conan(ConanFile):
         "directfb": False,
         "iconv": True,
         "video_rpi": False,
-        "sdl2main": True
+        "sdl2main": True,
+        "opengl": True,
+        "opengles": True
     }
 
     _source_subfolder = "source_subfolder"
@@ -80,7 +84,8 @@ class SDL2Conan(ConanFile):
                 self.requires("libalsa/1.1.9")
             if self.options.pulse:
                 self.requires("pulseaudio/13.0@bincrafters/stable")
-            self.requires("opengl/system")
+            if self.options.opengl:
+                self.requires("opengl/system")
 
     def system_requirements(self):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
@@ -201,6 +206,8 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions["HAVE_LIBC"] = True
             self._cmake.definitions["SDL_SHARED"] = self.options.shared
             self._cmake.definitions["SDL_STATIC"] = not self.options.shared
+            self._cmake.definitions["VIDEO_OPENGL"] = self.options.opengl
+            self._cmake.definitions["VIDEO_OPENGLES"] = self.options.opengles
             if self.settings.os == "Linux":
                 # See https://github.com/bincrafters/community/issues/696
                 self._cmake.definitions["SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS"] = 1
@@ -240,8 +247,6 @@ class SDL2Conan(ConanFile):
                 self._cmake.definitions["VIDEO_WAYLAND"] = self.options.wayland
                 self._cmake.definitions["VIDEO_DIRECTFB"] = self.options.directfb
                 self._cmake.definitions["VIDEO_RPI"] = self.options.video_rpi
-                self._cmake.definitions["HAVE_VIDEO_OPENGL"] = True
-                self._cmake.definitions["HAVE_VIDEO_OPENGL_EGL"] = True
             elif self.settings.os == "Windows":
                 self._cmake.definitions["DIRECTX"] = self.options.directx
 
