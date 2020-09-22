@@ -79,7 +79,7 @@ class SDL2Conan(ConanFile):
         if self.settings.os == "Linux" and tools.os_info.is_linux:
             self.requires("xorg/system")
             if not tools.which("pkg-config"):
-                self.requires("pkg-config_installer/0.29.2@bincrafters/stable")
+                self.requires("pkgconf/1.7.3")
             if self.options.alsa:
                 self.requires("libalsa/1.1.9")
             if self.options.pulse:
