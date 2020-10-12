@@ -39,6 +39,7 @@ class SDL2Conan(ConanFile):
         "sdl2main": [True, False],
         "opengl": [True, False],
         "opengles": [True, False],
+        "vulkan": [True, False],
     }
     default_options = {
         "shared": False,
@@ -65,7 +66,8 @@ class SDL2Conan(ConanFile):
         "video_rpi": False,
         "sdl2main": True,
         "opengl": True,
-        "opengles": True
+        "opengles": True,
+        "vulkan": True
     }
 
     _source_subfolder = "source_subfolder"
@@ -208,6 +210,7 @@ class SDL2Conan(ConanFile):
             self._cmake.definitions["SDL_STATIC"] = not self.options.shared
             self._cmake.definitions["VIDEO_OPENGL"] = self.options.opengl
             self._cmake.definitions["VIDEO_OPENGLES"] = self.options.opengles
+            self._cmake.definitions["VIDEO_VULKAN"] = self.options.vulkan
             if self.settings.os == "Linux":
                 # See https://github.com/bincrafters/community/issues/696
                 self._cmake.definitions["SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS"] = 1
