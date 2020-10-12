@@ -41,6 +41,7 @@ If you wish to report an issue or make a request for a package, please do so her
 | iconv      | False |  [True, False] |
 | video_rpi      | False |  [True, False] |
 | sdl2main      | True |  [True, False] |
+| vulkan      | True |  [True, False] |
 
 
 ## Add Remote
