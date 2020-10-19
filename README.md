@@ -25,6 +25,7 @@ If you wish to report an issue or make a request for a package, please do so her
 | alsa      | True |  [True, False] |
 | jack      | True |  [True, False] |
 | pulse      | True |  [True, False] |
+| sndio      | False |  [True, False] |
 | nas      | True |  [True, False] |
 | esd      | False |  [True, False] |
 | arts      | False |  [True, False] |
@@ -38,9 +39,11 @@ If you wish to report an issue or make a request for a package, please do so her
 | xvm      | True |  [True, False] |
 | wayland      | False |  [True, False] |
 | directfb      | False |  [True, False] |
-| iconv      | False |  [True, False] |
+| iconv      | True |  [True, False] |
 | video_rpi      | False |  [True, False] |
 | sdl2main      | True |  [True, False] |
+| opengl      | True |  [True, False] |
+| opengles      | True |  [True, False] |
 | vulkan      | True |  [True, False] |
 
 
