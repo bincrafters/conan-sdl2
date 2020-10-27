@@ -83,6 +83,9 @@ jobs:
         env:
           CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
           CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
+          CONAN_BPT_MATRIX: ${{toJson(matrix.config)}}
         run: |
-          bincrafters-package-tools prepare-env --platform gha --config '${{toJson(matrix.config)}}'
+          # remove newlines from matrix first
+          matrix=$(echo ${CONAN_BPT_MATRIX})
+          bincrafters-package-tools prepare-env --platform gha --config '${matrix}'
           bincrafters-package-tools --auto
