@@ -5,5 +5,5 @@ versions:
     folder: "2.0.11"
     build: "none"
   "2.0.10":
-    folder: "2.0.10"
+    folder: "2.0.12"
     build: "minimal"
