@@ -52,7 +52,7 @@ jobs:
           pip install git+https://github.com/bincrafters/bincrafters-package-tools@develop
           conan user
           echo "CONAN_CONANFILE=${{ matrix.config.CONAN_CONANFILE }}" >> $GITHUB_ENV
-          echo "export CONAN_CONANFILE=${{ matrix.config.CONANFILE }}"
+          echo "export CONAN_CONANFILE=${{ matrix.config.CONAN_CONANFILE }}"
           echo "CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}" >> $GITHUB_ENV
           echo "export CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}"
           echo "CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
@@ -84,5 +84,5 @@ jobs:
           CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
           CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
         run: |
-          bincrafters-package-tools prepare-env --platform gha --config '${{toJson(matrix.config }}'
+          bincrafters-package-tools prepare-env --platform gha --config '${{toJson(matrix.config)}}'
           bincrafters-package-tools --auto
