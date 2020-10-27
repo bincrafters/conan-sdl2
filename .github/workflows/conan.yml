@@ -1,5 +1,5 @@
-env:
-  splitByBuildTypes: "true"  # Possible values "false", "true", default: false
+# env:
+#  splitByBuildTypes: "true"  # Possible values "false", "true", default: false
 
 # bincrafters-conventions:gha-workflow-version:8
 # You can add custom environment variables above the version tag
