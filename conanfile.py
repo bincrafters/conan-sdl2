@@ -74,6 +74,9 @@ class SDL2Conan(ConanFile):
     _build_subfolder = "build_subfolder"
     _cmake = None
 
+    def package_id(self):
+        del self.info.options.sdl2main
+
     def requirements(self):
         if self.options.iconv:
             self.requires("libiconv/1.16")
@@ -279,9 +282,6 @@ class SDL2Conan(ConanFile):
         self.cpp_info.libdirs.extend(lib_paths)
         self.cpp_info.sharedlinkflags.extend(pkg_config.libs_only_other)
         self.cpp_info.exelinkflags.extend(pkg_config.libs_only_other)
-
-    def package_id(self):
-        del self.info.options.sdl2main
 
     @staticmethod
     def _chmod_plus_x(filename):
