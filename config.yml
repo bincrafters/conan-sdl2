@@ -3,3 +3,4 @@ versions:
     folder: "2.0.12"
   "2.0.10":
     folder: "2.0.10"
+    build: "minimal"
