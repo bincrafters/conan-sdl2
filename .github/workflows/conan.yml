@@ -1,4 +1,4 @@
-# bincrafters-conventions:gha-workflow-version:7
+# bincrafters-conventions:gha-workflow-version:8
 # You can add custom environment variables above the version tag
 # Do not modify the tag or anything below the tag
 # This script gets automatically updated
@@ -50,6 +50,10 @@ jobs:
         run: |
           pip install git+https://github.com/bincrafters/bincrafters-package-tools@develop
           conan user
+          echo "CONAN_CONANFILE=${{ matrix.config.CONAN_CONANFILE }}" >> $GITHUB_ENV
+          echo "export CONAN_CONANFILE=${{ matrix.config.CONANFILE }}"
+          echo "CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}" >> $GITHUB_ENV
+          echo "export CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}"
           echo "CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
           echo "export CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}"
           compiler="${{ matrix.config.compiler }}"
