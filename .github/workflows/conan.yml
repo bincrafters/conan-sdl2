@@ -84,5 +84,5 @@ jobs:
           CONAN_LOGIN_USERNAME: ${{ secrets.CONAN_LOGIN_USERNAME }}
           CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
         run: |
-          bincrafters-package-tools prepare-env --platform gha --config ${{ matrix.config }}
+          bincrafters-package-tools prepare-env --platform gha --config '${{toJson(matrix.config }}'
           bincrafters-package-tools --auto
