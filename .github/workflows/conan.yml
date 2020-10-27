@@ -50,10 +50,6 @@ jobs:
         run: |
           pip install git+https://github.com/bincrafters/bincrafters-package-tools@develop
           conan user
-          echo "CONAN_CONANFILE=${{ matrix.config.CONAN_CONANFILE }}" >> $GITHUB_ENV
-          echo "export CONAN_CONANFILE=${{ matrix.config.CONAN_CONANFILE }}"
-          echo "CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}" >> $GITHUB_ENV
-          echo "export CONAN_VERSION=${{ matrix.config.CONAN_VERSION }}"
           echo "CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
           echo "export CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}"
           compiler="${{ matrix.config.compiler }}"
@@ -86,5 +82,5 @@ jobs:
         run: |
           # remove newlines from matrix first
           matrix=$(echo ${CONAN_BPT_MATRIX})
-          bincrafters-package-tools prepare-env --platform gha --config '${matrix}'
+          bincrafters-package-tools prepare-env --platform gha --config "${matrix}"
           bincrafters-package-tools --auto
