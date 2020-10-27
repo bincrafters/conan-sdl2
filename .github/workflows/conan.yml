@@ -24,7 +24,7 @@ jobs:
           python-version: "3.8"
       - name: Install Package Tools
         run: |
-          pip install bincrafters_package_tools
+          pip install git+https:https://github.com/bincrafters/bincrafters-package-tools@develop
           conan user
       - name: Generate Job Matrix
         id: set-matrix
@@ -48,7 +48,7 @@ jobs:
           python-version: "3.8"
       - name: Install Conan
         run: |
-          pip install bincrafters_package_tools
+          pip install git+https:https://github.com/bincrafters/bincrafters-package-tools@develop
           conan user
           echo "CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}" >> $GITHUB_ENV
           echo "export CONAN_${{ matrix.config.compiler }}_VERSIONS=${{ matrix.config.version }}"
