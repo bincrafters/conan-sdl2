@@ -130,7 +130,6 @@ class SDL2Conan(ConanFile):
                 for package in packages:
                     installer.install(package)
 
-
     def config_options(self):
         if self.settings.os != "Linux":
             self.options.remove("alsa")
