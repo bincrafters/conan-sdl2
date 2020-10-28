@@ -74,6 +74,7 @@ class SDL2Conan(ConanFile):
     _build_subfolder = "build_subfolder"
     _cmake = None
 
+
     def requirements(self):
         if self.options.iconv:
             self.requires("libiconv/1.16")
