@@ -169,11 +169,10 @@ class SDL2Conan(ConanFile):
         extracted_dir = "SDL2-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
 
-        if "patches" in self.conan_data and self.version in self.conan_data["patches"]:
-            for patch in self.conan_data["patches"][self.version]:
-                tools.patch(**patch)
-
     def build(self):
+        for patch in self.conan_data.get("patches", {}).get(self.version, []):
+            tools.patch(**patch)
+
         # ensure sdl2-config is created for MinGW
         tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
                               "if(NOT WINDOWS OR CYGWIN)",
